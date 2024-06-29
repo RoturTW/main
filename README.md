@@ -2,4 +2,4 @@ Rotur is a cloudlink based communication protocol used by the biggest, best, and
 
 View all documentation here:
 
-[Rotur/wiki](https://github.com/RoturTW/wiki/wiki)
+[Wiki](https://github.com/RoturTW/main/wiki)
