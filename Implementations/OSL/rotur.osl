@@ -1,0 +1,63 @@
+// import this script
+def "connectRotur" "rotur_username"
+  rotur = "rotur.milosantos.com:443".newWebsocket()
+  until rotur.wsOpen() (
+  )
+
+  msg = {"cmd":"handshake","val":{"language":"OSL","version":{"editorType":"origin","versionNumber":""}},"listener":"handshake_cfg"}
+  rotur.wsSend(msg)
+  msg = ""
+  client = {}
+  packets = []
+  users = []
+endef
+
+def "handleRotur"
+  if rotur.wsHasnew() and rotur.wsOpen() (
+    log msg
+    msg = rotur.wsGetnext()
+    cmd = msg.cmd
+    if cmd == "client_ip" (
+      client.ip = msg.val
+    )
+    
+    if cmd == "ulist" (
+      if msg.mode == "set" (
+        users = msg.val
+      )
+      if msg.mode == "add" (
+        users = users.append(msg.val)
+      )
+      if msg.mode == "remove" (
+        users = users.delete(users.index(msg.val))
+      )
+    )
+    
+    if cmd == "pmsg" (
+      msg.delete("cmd")
+      msg.delete("rooms")
+      packets.append(msg)
+    )
+    if msg.listener == "handshake_cfg" (
+      val = {"cmd":"setid","val":"","listener":"username_cfg"}
+      val.val = rotur_username
+      rotur.wsSend(val)
+    )
+    if msg.listener == "username_cfg" (
+      val = {"cmd":"link","val":["roturTW"]}
+      rotur.wsSend(val)
+    )
+  )
+  msg = ""
+endef
+
+def "username.roturSend(message,source,target)"
+  msg = {"cmd":"pmsg"}
+  val = {}
+  val.payload = message
+  val.target = target
+  val.source = source
+
+  msg.val = val
+  rotur.wsSend(temp)
+endef

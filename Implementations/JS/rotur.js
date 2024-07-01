@@ -37,12 +37,12 @@ function linkRoom(room) {
   ws.send(JSON.stringify(msg));
 }
 
-function replyToPacket(message) {
+function replyToPacket(message, payload) {
   msg = {
     "cmd": "pmsg",
     "val": {
       "target": message.source,
-      "message": "Hello, " + message.origin + "!"
+      "message": payload
     },
     "id": message.origin
   }
