@@ -1,5 +1,3 @@
-Welcome to the rotur wiki!
-
 ## What is rotur?
 
 Rotur is a cloudlink based standard for packet based communications in turbowarp projects, Generally for Turbowarp-Based OSs.
