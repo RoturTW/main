@@ -2,7 +2,7 @@
 The only variables you need to care about are
 
 ```js
-let username = "nov-testAcc";
+let username = "";
 let packets = {}
 ```
 
