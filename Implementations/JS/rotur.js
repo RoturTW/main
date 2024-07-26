@@ -79,7 +79,7 @@ function sendMessage(payload, username, target, source) {
   ws.send(JSON.stringify(msg));
 }
 
-let ws = new WebSocket("wss://rotur.milosantos.com");
+let ws = new WebSocket("wss://rotur.mistium.com");
 let client = {}
 // wait for connection
 ws.onopen = function () {
