@@ -5,7 +5,7 @@ Rotur is a cloudlink based standard for packet based communications in turbowarp
 ## Sample Project
 
 ### This is essentially the prefered documentation on how to use Rotur, since it can be used to figure out the system yourself
-[Download here](https://github.com/RoturTW/main/raw/main/Example%20Projects/Rotur_Example_Project.sb3)
+[Download here](https://raw.githubusercontent.com/RoturTW/main/main/Implementations/SCRATCH/Rotur_Example_Project.sb3)
 
 # What can I use to make clients?
 
