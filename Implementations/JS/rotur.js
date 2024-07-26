@@ -1,4 +1,15 @@
-let username = "nov-testAcc";
+let username = "test";
+// the user's descriminator
+
+let designation = "rtr"
+// learn about designaitions here: https://github.com/RoturTW/main/wiki/Rotur-Designations
+
+let my_client = {
+  "system": "rotur.js",
+  "version": "v2"
+}
+// client is sent with all packets to help tell servers and other clients what system you are using
+
 let packets = {}
 // connect to websocket server
 function sendHandshake() {
@@ -41,8 +52,10 @@ function replyToPacket(message, payload) {
   msg = {
     "cmd": "pmsg",
     "val": {
+      "client": my_client,
       "target": message.source,
       "message": payload
+      "timestamp": Date.now()
     },
     "id": message.origin
   }
@@ -54,9 +67,11 @@ function sendMessage(payload, username, target, source) {
   msg = {
     "cmd": "pmsg",
     "val": {
+      "client": my_client,
       "target": target,
       "payload": payload,
-      "source": source
+      "source": source,
+      "timestamp": Date.now()
     },
     "id": username
   }
@@ -101,10 +116,10 @@ ws.onopen = function () {
       delete packet.val
     }
     if (packet.listener == "handshake_cfg") {
-      setUsername(username);
+      setUsername(designation + "-" + username);
     }
     if (packet.listener == "set_username_cfg") {
-      client.username = username;
+      client.username = designation + "-" + username;
       linkRoom(["roturTW"]);
     }
     if (packet.listener == "link_cfg") {
