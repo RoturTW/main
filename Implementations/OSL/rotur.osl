@@ -1,6 +1,6 @@
 // import this script
 def "connectRotur" "rotur_username"
-  rotur = "rotur.milosantos.com:443".newWebsocket()
+  rotur = "rotur.mistium.com:443".newWebsocket()
   until rotur.wsOpen() (
   )
 
