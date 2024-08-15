@@ -18,7 +18,7 @@ function sendHandshake() {
     "val": {
       "language": "Javascript",
       "version": {
-        "editorType": "NovaOS",
+        "editorType": "rotur",
         "versionNumber": null
       }
     },
