@@ -1,0 +1,19 @@
+{
+  "name": "rotur-websocket-client",
+  "version": "1.0.0",
+  "description": "A Node.js WebSocket client for connecting to the Rotur server.",
+  "main": "rotur.js",
+  "scripts": {
+    "start": "node rotur.js"
+  },
+  "keywords": [
+    "websocket",
+    "client",
+    "rotur"
+  ],
+  "author": "RoturTW",
+  "license": "MIT",
+  "dependencies": {
+    "ws": "^8.13.0"
+  }
+}
