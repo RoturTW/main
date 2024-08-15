@@ -45,7 +45,7 @@ public class Program
                 language = "C#",
                 version = new VersionInfo
                 {
-                    editorType = "NovaOS",
+                    editorType = "rotur",
                     versionNumber = null
                 }
             },
