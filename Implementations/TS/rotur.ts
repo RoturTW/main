@@ -38,7 +38,7 @@ function sendHandshake(): void {
     val: {
       language: "Javascript",
       version: {
-        editorType: "NovaOS",
+        editorType: "rotur",
         versionNumber: null
       }
     },
