@@ -1,1 +1,16 @@
-You can use my scratch extension for rotur here: https://extensions.mistium.com/
+V4 of the rotur extension! A massively powerful way to interact with rotur accounts.
+
+This extension gives you access to a whole host of features:
+
+```
+Accounts
+Cloudlink Messaging
+Designation system
+Client, and improved packets
+Messaging ports
+Emails
+Friends
+Cloud Storage
+Currency system
+Online item system
+```
