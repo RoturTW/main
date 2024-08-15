@@ -1,7 +1,3 @@
-Here is the documentation rewritten for the TypeScript version:
-
----
-
 ## Variables
 
 ```typescript
@@ -99,5 +95,3 @@ let packets: { [key: string]: Packet[] } = {
   ]
 };
 ```
-
----
