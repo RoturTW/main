@@ -200,6 +200,9 @@ class RoturExtension {
     this.mail = {};
     this.localKeys = {};
 
+    this.version = 4;
+    this.outdated = false;
+
     fetch("https://raw.githubusercontent.com/Mistium/Origin-OS/main/Resources/info.json")
       .then((response) => {
         if (response.ok) {
@@ -217,6 +220,19 @@ class RoturExtension {
         this.server = "wss://rotur.mistium.com";
       });
 
+    if (typeof window.scaffolding !== "object") {
+      fetch("https://raw.githubusercontent.com/RoturTW/main/main/Implementations/SCRATCH/version.txt")
+        .then((response) => {
+          if (response.ok) {
+            return response.text();
+          } else {
+            throw new Error('Network response was not ok');
+          }
+        })
+        .then((data) => {
+          this.outdated = this.version < parseInt(data);
+        })
+    }
   }
 
   getInfo() {
@@ -225,6 +241,12 @@ class RoturExtension {
       name: "RoturV4",
       color1: "#403041",
       blocks: [
+        {
+          blockType: Scratch.BlockType.BUTTON,
+          text: "New Update Available",
+          func: "openUpdate",
+          hideFromPalette: !this.outdated,
+        },
         {
           opcode: "connectToServer",
           blockType: Scratch.BlockType.COMMAND,
@@ -1109,7 +1131,7 @@ class RoturExtension {
   openFriendsDocs() {
     window.open("https://github.com/RoturTW/main/wiki/Friends")
   }
-  
+
   openStorageDocs() {
     window.open("https://github.com/RoturTW/main/wiki/Data-Storage")
   }
