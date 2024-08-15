@@ -984,6 +984,22 @@ class RoturExtension {
             },
           },
         },
+        {
+          opcode: "getPublicItems",
+          blockType: Scratch.BlockType.REPORTER,
+          text: "Public Items, Page: [PAGE]",
+          arguments: {
+            PAGE: {
+              type: Scratch.ArgumentType.STRING,
+              defaultValue: "1",
+            },
+          },
+        },
+        {
+          opcode: "getPublicItemPages",
+          blockType: Scratch.BlockType.REPORTER,
+          text: "Public Item Pages",
+        },
         "---",
         {
           blockType: Scratch.BlockType.LABEL,
@@ -2678,6 +2694,80 @@ class RoturExtension {
     });
   }
 
+  getPublicItems(args) {
+    if (!this.is_connected) {
+      return "Not Connected";
+    }
+    if (!this.authenticated) {
+      return "Not Logged In";
+    }
+
+    return new Promise((resolve, reject) => {
+      this.ws.send(
+        JSON.stringify({
+          cmd: "pmsg",
+          val: {
+            command: "item_public",
+            payload: args.PAGE,
+            id: this.userToken,
+            client: this.my_client,
+          },
+          id: this.accounts,
+        }),
+      );
+
+      const handlePublicItemsResponse = (event) => {
+        let packet = JSON.parse(event.data);
+        if (packet?.origin?.username === this.accounts) {
+          if (packet.val.source_command === "item_public") {
+            reject(JSON.stringify(packet.val.payload));
+            this.ws.removeEventListener(
+              "message",
+              handlePublicItemsResponse,
+            );
+          }
+        }
+      };
+      this.ws.addEventListener("message", handlePublicItemsResponse);
+    });
+  }
+
+  getPublicItemPages() {
+    if (!this.is_connected) {
+      return "Not Connected";
+    }
+    if (!this.authenticated) {
+      return "Not Logged In";
+    }
+    return new Promise((resolve) => {
+      this.ws.send(
+        JSON.stringify({
+          cmd: "pmsg",
+          val: {
+            command: "item_public_pages",
+            id: this.userToken,
+            client: this.my_client,
+          },
+          id: this.accounts,
+        }),
+      );
+
+      const handlePublicItemPagesResponse = (event) => {
+        let packet = JSON.parse(event.data);
+        if (packet?.origin?.username === this.accounts) {
+          if (packet.val.source_command === "item_public_pages") {
+            resolve(packet.val.payload);
+            this.ws.removeEventListener(
+              "message",
+              handlePublicItemPagesResponse,
+            );
+          }
+        }
+      }
+      this.ws.addEventListener("message", handlePublicItemPagesResponse);
+    });
+  }
+
   getMyCreatedItems() {
     if (!this.is_connected) {
       return "Not Connected";
@@ -2785,6 +2875,9 @@ class RoturExtension {
     }
     if (!this.authenticated) {
       return "Not Logged In";
+    }
+    if (this.user["sys.items"].indexOf(args.ITEM) === -1) {
+      return "You Do Not Own This Item";
     }
     return new Promise((resolve, reject) => {
       this.ws.send(
