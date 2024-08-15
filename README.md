@@ -39,5 +39,3 @@ Its best to use the client from the example project at the top of this page
 A rotur designation is the way that a username is formatted to tell other clients, what system is being used by that user
 
 [Rotur Designations](https://github.com/RoturTW/main/wiki/Rotur-Designations)
-
-![image](https://github.com/user-attachments/assets/e9bbcda4-82dc-4147-b87c-06fdb7bf775b)
