@@ -315,6 +315,17 @@ class RoturExtension {
           },
         },
         {
+          opcode: "loginToken",
+          blockType: Scratch.BlockType.REPORTER,
+          text: "Login With Token: [TOKEN]",
+          arguments: {
+            TOKEN: {
+              type: Scratch.ArgumentType.STRING,
+              defaultValue: "token",
+            },
+          },
+        },
+        {
           opcode: "register",
           blockType: Scratch.BlockType.REPORTER,
           text: "Register With Username: [USERNAME] And Password: [PASSWORD]",
@@ -1294,7 +1305,7 @@ class RoturExtension {
               this.user[packet.payload.key] = packet.payload.value;
             }
           } else {
-            if (!this.packets[packet.target]) {
+            if (!this.packets[packet.val.target]) {
               this.packets[packet.val.target] = [];
             }
             this.packets[packet.val.target].push(packet);
@@ -2039,7 +2050,7 @@ class RoturExtension {
     if (!this.is_connected) {
       return "Not Connected";
     }
-    let regexp = new RegExp('(?<=")[a-zA-Z]{3}-' + args.USER + '§\\S{10}(?=")', "gi");
+    let regexp = new RegExp('[a-zA-Z]{3}-' + args.USER + '§\\S{10}', "gi");
     return JSON.stringify(
       this.client.users.filter((user) => user.match(regexp) !== null),
     );
