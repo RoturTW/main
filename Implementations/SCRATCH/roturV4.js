@@ -584,17 +584,6 @@ class RoturExtension {
           isEdgeActivated: false,
         },
         {
-          opcode: "getUserOnline",
-          blockType: Scratch.BlockType.BOOLEAN,
-          text: "User [USER] Is Online",
-          arguments: {
-            USER: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "targetUser",
-            },
-          },
-        },
-        {
           opcode: "getPacketsFromTarget",
           blockType: Scratch.BlockType.REPORTER,
           text: "Get Packets From Port [TARGET]",
@@ -1346,6 +1335,7 @@ class RoturExtension {
       console.log("Disconnected!");
       Scratch.vm.runtime.startHats("roturEXT_whenDisconnected");
       this.is_connected = false;
+      this.authenticated = false;
     };
   }
 
@@ -1979,9 +1969,11 @@ class RoturExtension {
 
   deleteFirstPacketOnTarget(args) {
     if (this.packets[args.TARGET]) {
+      let packet = this.packets[args.TARGET]?.[0];
       this.packets[args.TARGET].shift();
+      return JSON.stringify(packet);
     }
-    return this.getPacketsFromTarget(args);
+    return "{}";
   }
 
   deletePacketsOnTarget(args) {
