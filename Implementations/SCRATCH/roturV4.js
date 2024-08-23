@@ -1335,7 +1335,6 @@ class RoturExtension {
       console.log("Disconnected!");
       Scratch.vm.runtime.startHats("roturEXT_whenDisconnected");
       this.is_connected = false;
-      this.authenticated = false;
     };
   }
 
@@ -1364,6 +1363,7 @@ class RoturExtension {
   }
 
   loggedIn() {
+
     return this.authenticated && this.is_connected;
   }
 
