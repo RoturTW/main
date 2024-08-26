@@ -324,6 +324,7 @@ class RoturExtension {
               defaultValue: "token",
             },
           },
+          hideFromPalette: true,
         },
         {
           opcode: "register",
@@ -339,6 +340,11 @@ class RoturExtension {
               defaultValue: "password",
             },
           },
+        },
+        {
+          opcode: "deleteAccount",
+          blockType: Scratch.BlockType.REPORTER,
+          text: "Delete Account",
         },
         {
           opcode: "logout",
@@ -1474,6 +1480,51 @@ class RoturExtension {
       };
 
       this.ws.addEventListener("message", handleRegisterResponse);
+    });
+  }
+
+  deleteAccount() {
+    if (!this.is_connected) {
+      return "Not Connected";
+    }
+    if (!this.authenticated) {
+      return "Not Logged In";
+    }
+    if (!confirm(`Are You Sure You Want To Delete ${this.client.username}? Everything will be lost!`)) {
+      return "Cancelled";
+    }
+    return new Promise((resolve, reject) => {
+      this.ws.send(
+        JSON.stringify({
+          cmd: "pmsg",
+          val: {
+            client: this.my_client,
+            command: "delete_account",
+            id: this.userToken,
+          },
+          id: this.accounts,
+        }),
+      );
+
+      const handleDeleteAccountResponse = (event) => {
+        let packet = JSON.parse(event.data);
+        if (packet?.origin.username === this.accounts) {
+          if (packet.val?.source_command === "delete") {
+            if (packet.val.payload === "Account Deleted Successfully") {
+              this.userToken = "";
+              this.user = {};
+              this.authenticated = false;
+              this.ws.close();
+              resolve("Account Deleted Successfully");
+            } else {
+              reject("Failed to delete account: " + packet.val.payload);
+            }
+            this.ws.removeEventListener("message", handleDeleteAccountResponse);
+          }
+        }
+      };
+
+      this.ws.addEventListener("message", handleDeleteAccountResponse);
     });
   }
 
