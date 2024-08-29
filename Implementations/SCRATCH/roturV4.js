@@ -240,7 +240,6 @@ class RoturExtension {
 
   async _initializeBadges() {
     await this._getBadges(); // Wait for the fetch operation to complete
-    console.log(this.badges); // Now this.badges is set correctly
   }
 
   async _getBadges() {
@@ -1127,6 +1126,11 @@ class RoturExtension {
           text: "Badges",
         },
         {
+          blockType: Scratch.BlockType.BUTTON,
+          text: "Badge Docs",
+          func: "openBadgesDocs",
+        },
+        {
           opcode: "gotBadgesSuccessfully",
           blockType: Scratch.BlockType.BOOLEAN,
           text: "Badges Loaded Successfully",
@@ -1167,6 +1171,11 @@ class RoturExtension {
           opcode: "allBadges",
           blockType: Scratch.BlockType.REPORTER,
           text: "All Badges",
+        },
+        {
+          opcode: "redownloadBadges",
+          blockType: Scratch.BlockType.COMMAND,
+          text: "Redownload Badges",
         },
       ],
       menus: {
@@ -1228,6 +1237,10 @@ class RoturExtension {
 
   openCurrencyDocs() {
     window.open("https://github.com/RoturTW/main/wiki/Currency")
+  }
+
+  openBadgesDocs() {
+    window.open("https://github.com/RoturTW/main/wiki/Badges")
   }
 
   // main functions
@@ -3152,6 +3165,10 @@ class RoturExtension {
 
   badgeInfo(args) {
     return JSON.stringify(this.badges?.[args.BADGE] ?? {});
+  }
+
+  redownloadBadges() {
+    this._initializeBadges()
   }
 }
 
