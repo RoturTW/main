@@ -220,6 +220,9 @@ class RoturExtension {
         this.server = "wss://rotur.mistium.com";
       });
 
+    this._initializeBadges(); // Start fetching badges
+
+
     if (typeof window.scaffolding !== "object") {
       fetch("https://raw.githubusercontent.com/RoturTW/main/main/Implementations/SCRATCH/version.txt")
         .then((response) => {
@@ -232,6 +235,24 @@ class RoturExtension {
         .then((data) => {
           this.outdated = this.version < parseInt(data);
         })
+    }
+  }
+
+  async _initializeBadges() {
+    await this._getBadges(); // Wait for the fetch operation to complete
+    console.log(this.badges); // Now this.badges is set correctly
+  }
+
+  async _getBadges() {
+    try {
+      const response = await fetch("https://raw.githubusercontent.com/RoturTW/Badges/main/badges.json");
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      this.badges = data;
+    } catch (error) {
+      this.badges = [];
     }
   }
 
@@ -1099,6 +1120,53 @@ class RoturExtension {
               defaultValue: "item",
             },
           },
+        },
+        "---",
+        {
+          blockType: Scratch.BlockType.LABEL,
+          text: "Badges",
+        },
+        {
+          opcode: "gotBadgesSuccessfully",
+          blockType: Scratch.BlockType.BOOLEAN,
+          text: "Badges Loaded Successfully",
+        },
+        {
+          opcode: "userBadges",
+          blockType: Scratch.BlockType.REPORTER,
+          text: "User Badges",
+        },
+        {
+          opcode: "userBadgeCount",
+          blockType: Scratch.BlockType.REPORTER,
+          text: "User Badge Count",
+        },
+        {
+          opcode: "hasBadge",
+          blockType: Scratch.BlockType.BOOLEAN,
+          text: "User Has Badge [BADGE]",
+          arguments: {
+            BADGE: {
+              type: Scratch.ArgumentType.STRING,
+              defaultValue: "badge",
+            },
+          },
+        },
+        {
+          opcode: "badgeInfo",
+          blockType: Scratch.BlockType.REPORTER,
+          text: "Badge Info [BADGE]",
+          arguments: {
+            BADGE: {
+              type: Scratch.ArgumentType.STRING,
+              defaultValue: "badge",
+            },
+          },
+        },
+        {
+          opcode: "allBadges",
+          blockType: Scratch.BlockType.REPORTER,
+          text: "All Badges",
         },
       ],
       menus: {
@@ -3041,6 +3109,49 @@ class RoturExtension {
 
       this.ws.addEventListener("message", handleShowItemResponse);
     });
+  }
+
+  gotBadgesSuccessfully() {
+    return JSON.stringify(this.badges) !== "[]";
+  }
+
+  userBadges() {
+    if (!this.is_connected) {
+      return "Not Connected";
+    }
+    if (!this.authenticated) {
+      return "Not Logged In";
+    }
+    return JSON.stringify(this.user["sys.badges"]);
+  }
+
+  userBadgeCount() {
+    if (!this.is_connected) {
+      return "Not Connected";
+    }
+    if (!this.authenticated) {
+      return "Not Logged In";
+    }
+    return this.user["sys.badges"].length;
+  }
+
+  hasBadge(args) {
+    if (!this.is_connected) {
+      return false;
+    }
+    if (!this.authenticated) {
+      return false;
+    }
+    return this.user["sys.badges"].includes(args.BADGE);
+  }
+
+  allBadges() {
+    console.log(this.badges);
+    return JSON.stringify(Object.keys(this.badges));
+  }
+
+  badgeInfo(args) {
+    return JSON.stringify(this.badges?.[args.BADGE] ?? {});
   }
 }
 
