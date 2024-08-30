@@ -1442,7 +1442,9 @@ class RoturExtension {
   }
 
   disconnect() {
-    this.ws.close();
+    if (this.ws) {
+      this.ws.close();
+    }
   }
 
   connected() {
@@ -1450,7 +1452,6 @@ class RoturExtension {
   }
 
   loggedIn() {
-
     return this.authenticated && this.is_connected;
   }
 
