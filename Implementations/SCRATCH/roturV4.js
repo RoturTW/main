@@ -1619,6 +1619,7 @@ class RoturExtension {
         cmd: "pmsg",
         val: {
           command: "logout",
+          client: this.my_client,
           id: this.userToken,
         },
         id: this.accounts,
@@ -1666,6 +1667,7 @@ class RoturExtension {
           cmd: "pmsg",
           val: {
             command: "update",
+            client: this.my_client,
             id: this.userToken,
             payload: [args.KEY, args.VALUE],
           },
@@ -1746,6 +1748,7 @@ class RoturExtension {
                 cmd: "pmsg",
                 val: {
                   command: "storage_getid",
+                  client: this.my_client,
                   id: this.userToken,
                   payload: args.ID,
                 },
@@ -1817,6 +1820,7 @@ class RoturExtension {
               val: {
                 command: "storage_set",
                 id: this.userToken,
+                client: this.my_client,
                 payload: {
                   key: args.KEY,
                   value: args.VALUE,
@@ -1873,6 +1877,7 @@ class RoturExtension {
               val: {
                 command: "storage_delete",
                 id: this.userToken,
+                client: this.my_client,
                 payload: {
                   key: args.KEY,
                   id: this.storage_id,
@@ -1977,6 +1982,7 @@ class RoturExtension {
             cmd: "pmsg",
             val: {
               command: "storage_usage",
+              client: this.my_client,
               id: this.userToken,
             },
             id: this.accounts,
@@ -2014,6 +2020,7 @@ class RoturExtension {
             cmd: "pmsg",
             val: {
               command: "storage_usage",
+              client: this.my_client,
               id: this.userToken,
             },
             id: this.accounts,
@@ -2197,6 +2204,7 @@ class RoturExtension {
           cmd: "pmsg",
           val: {
             command: "omail_send",
+            client: this.my_client,
             id: this.userToken,
             payload: {
               title: args.SUBJECT,
@@ -2241,6 +2249,7 @@ class RoturExtension {
           cmd: "pmsg",
           val: {
             command: "omail_getinfo",
+            client: this.my_client,
             id: this.userToken,
           },
           id: this.accounts,
@@ -2276,6 +2285,7 @@ class RoturExtension {
           cmd: "pmsg",
           val: {
             command: "omail_getid",
+            client: this.my_client,
             payload: args.ID,
             id: this.userToken,
           },
@@ -2314,6 +2324,7 @@ class RoturExtension {
           cmd: "pmsg",
           val: {
             command: "omail_delete",
+            client: this.my_client,
             payload: args.ID,
             id: this.userToken,
           },
@@ -2354,6 +2365,7 @@ class RoturExtension {
           cmd: "pmsg",
           val: {
             command: "omail_delete",
+            client: this.my_client,
             payload: "all",
             id: this.userToken,
           },
@@ -2408,6 +2420,7 @@ class RoturExtension {
           cmd: "pmsg",
           val: {
             command: "friend_request",
+            client: this.my_client,
             payload: args.FRIEND,
             id: this.userToken,
           },
@@ -2452,6 +2465,7 @@ class RoturExtension {
           cmd: "pmsg",
           val: {
             command: "friend_remove",
+            client: this.my_client,
             payload: args.FRIEND,
             id: this.userToken,
           },
@@ -2493,6 +2507,7 @@ class RoturExtension {
           cmd: "pmsg",
           val: {
             command: "friend_accept",
+            client: this.my_client,
             payload: args.FRIEND,
             id: this.userToken,
           },
@@ -2538,6 +2553,7 @@ class RoturExtension {
           cmd: "pmsg",
           val: {
             command: "friend_decline",
+            client: this.my_client,
             payload: args.FRIEND,
             id: this.userToken,
           },
@@ -2628,6 +2644,7 @@ class RoturExtension {
           cmd: "pmsg",
           val: {
             command: "currency_transfer",
+            client: this.my_client,
             payload: {
               amount: args.AMOUNT,
               recipient: args.USER,
