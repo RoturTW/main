@@ -1611,6 +1611,9 @@ class RoturExtension {
   }
 
   logout() {
+    if (!this.is_connected) {
+      return;
+    }
     this.ws.send(
       JSON.stringify({
         cmd: "pmsg",
