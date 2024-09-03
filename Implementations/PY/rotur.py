@@ -1,6 +1,8 @@
 import websocket
 import json
 import threading
+import string
+import random
 
 # Define global variables
 username = "designation-[name]"
@@ -125,7 +127,13 @@ def start_websocket():
     # Run WebSocket client
     ws.run_forever()
 
-def run():
+def connect(designation,name):
+    global username
+    designation = str(designation).lower()
+    if len(designation) != 3:
+        return "Invalid Designation"
+
+    username = designation + "-" + str(name) + "§" + ''.join(random.choice("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") for _ in range(10))
     # Start the WebSocket in a new thread
     ws_thread = threading.Thread(target=start_websocket)
     ws_thread.daemon = True  # Daemonize thread to ensure it exits when the main program does
