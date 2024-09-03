@@ -5,6 +5,7 @@ import json
 username = "designation-[name]"
 packets = {}
 client = {}
+ws = None  # Declare ws as a global variable
 
 # WebSocket URL
 ws_url = "wss://rotur.mistium.com"
@@ -112,6 +113,8 @@ def on_close(ws):
     print("WebSocket closed")
 
 def run():
+    global ws  # Use the global ws variable
+
     # Create WebSocket connection
     ws = websocket.WebSocketApp(ws_url,
                                 on_open=on_open,
@@ -120,3 +123,7 @@ def run():
 
     # Run WebSocket client
     ws.run_forever()
+
+
+# Start the WebSocket client
+run()
