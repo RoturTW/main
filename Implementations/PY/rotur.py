@@ -111,7 +111,7 @@ def on_message(ws, message):
 def on_close(ws):
     print("WebSocket closed")
 
-if __name__ == "__main__":
+def run():
     # Create WebSocket connection
     ws = websocket.WebSocketApp(ws_url,
                                 on_open=on_open,
