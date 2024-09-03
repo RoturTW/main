@@ -1,5 +1,6 @@
 import websocket
 import json
+import threading
 
 # Define global variables
 username = "designation-[name]"
@@ -112,7 +113,7 @@ def on_message(ws, message):
 def on_close(ws):
     print("WebSocket closed")
 
-def run():
+def start_websocket():
     global ws  # Use the global ws variable
 
     # Create WebSocket connection
@@ -124,6 +125,8 @@ def run():
     # Run WebSocket client
     ws.run_forever()
 
-
-# Start the WebSocket client
-run()
+def run():
+    # Start the WebSocket in a new thread
+    ws_thread = threading.Thread(target=start_websocket)
+    ws_thread.daemon = True  # Daemonize thread to ensure it exits when the main program does
+    ws_thread.start()
