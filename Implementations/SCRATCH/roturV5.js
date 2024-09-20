@@ -194,11 +194,13 @@ class RoturExtension {
     this.server = "";
     this.userToken = "";
     this.user = {};
+    this.first_login = false;
     this.designation = "";
     this.username = "";
     this.my_client = {};
     this.mail = {};
     this.localKeys = {};
+    this.syncedVariables = {};
 
     this.version = 4;
     this.outdated = false;
@@ -258,7 +260,7 @@ class RoturExtension {
   getInfo() {
     return {
       id: "roturEXT",
-      name: "RoturV4",
+      name: "RoturV5",
       color1: "#403041",
       blocks: [
         {
@@ -282,7 +284,7 @@ class RoturExtension {
             },
             VERSION: {
               type: Scratch.ArgumentType.STRING,
-              defaultValue: "v4",
+              defaultValue: "v5",
             },
           },
         },
@@ -375,6 +377,11 @@ class RoturExtension {
           opcode: "loggedIn",
           blockType: Scratch.BlockType.BOOLEAN,
           text: "Authenticated",
+        },
+        {
+          opcode: "firstLogin",
+          blockType: Scratch.BlockType.BOOLEAN,
+          text: "Is This The First Login Of Today?",
         },
         {
           opcode: "whenAuthenticated",
@@ -753,6 +760,71 @@ class RoturExtension {
           opcode: "findID",
           blockType: Scratch.BlockType.REPORTER,
           text: "Find All Connections Of Username: [USER]",
+          arguments: {
+            USER: {
+              type: Scratch.ArgumentType.STRING,
+              defaultValue: "user",
+            },
+          },
+        },
+        "---",
+        {
+          blockType: Scratch.BlockType.LABEL,
+          text: "Synced Variables"
+        },
+        {
+          opcode: "setSyncedVariable",
+          blockType: Scratch.BlockType.COMMAND,
+          text: "Sync Variable With [USER] Of [KEY] To [VALUE]",
+          arguments: {
+            USER: {
+              type: Scratch.ArgumentType.STRING,
+              defaultValue: "user",
+            },
+            KEY: {
+              type: Scratch.ArgumentType.STRING,
+              defaultValue: "key",
+            },
+            VALUE: {
+              type: Scratch.ArgumentType.STRING,
+              defaultValue: "value",
+            },
+          },
+        },
+        {
+          opcode: "getSyncedVariable",
+          blockType: Scratch.BlockType.REPORTER,
+          text: "Get Synced Variable With [USER] Of [KEY]",
+          arguments: {
+            USER: {
+              type: Scratch.ArgumentType.STRING,
+              defaultValue: "user",
+            },
+            KEY: {
+              type: Scratch.ArgumentType.STRING,
+              defaultValue: "key",
+            },
+          },
+        },
+        {
+          opcode: "deleteSyncedVariable",
+          blockType: Scratch.BlockType.COMMAND,
+          text: "Delete Synced Variable With [USER] Of [KEY]",
+          arguments: {
+            USER: {
+              type: Scratch.ArgumentType.STRING,
+              defaultValue: "user",
+            },
+            KEY: {
+              type: Scratch.ArgumentType.STRING,
+              defaultValue: "key",
+            },
+          },
+        },
+        {
+          opcode: "getSyncedVariables",
+          blockType: Scratch.BlockType.REPORTER,
+          text: "Get Synced Variables With [USER]",
           arguments: {
             USER: {
               type: Scratch.ArgumentType.STRING,
@@ -1177,6 +1249,104 @@ class RoturExtension {
           blockType: Scratch.BlockType.COMMAND,
           text: "Redownload Badges",
         },
+        "---",
+        {
+          blockType: Scratch.BlockType.LABEL,
+          text: "Voice Calling",
+        },
+        {
+          opcode: "callUser",
+          blockType: Scratch.BlockType.COMMAND,
+          text: "Call User [USERNAME]",
+          arguments: {
+            USERNAME: {
+              type: Scratch.ArgumentType.STRING,
+              defaultValue: "des-user§instance",
+            },
+          },
+        },
+        {
+          opcode: "answerCall",
+          blockType: Scratch.BlockType.COMMAND,
+          text: "Answer Call From [USERNAME]",
+          arguments: {
+            USERNAME: {
+              type: Scratch.ArgumentType.STRING,
+              defaultValue: "des-user§instance",
+            },
+          },
+        },
+        {
+          opcode: "declineCall",
+          blockType: Scratch.BlockType.COMMAND,
+          text: "Decline Call From [USERNAME]",
+          arguments: {
+            USERNAME: {
+              type: Scratch.ArgumentType.STRING,
+              defaultValue: "des-user§instance",
+            },
+          },
+        },
+        {
+          opcode: "endCall",
+          blockType: Scratch.BlockType.COMMAND,
+          text: "End Call",
+        },
+        {
+          opcode: "allIncomingCalls",
+          blockType: Scratch.BlockType.REPORTER,
+          text: "All Incoming Calls",
+        },
+        {
+          opcode: "callStatus",
+          blockType: Scratch.BlockType.REPORTER,
+          text: "Call Status", // 0 = no call, 1 = incoming call, 2 = outgoing call, 3 = call in progress, 4 = call disconnected
+        },
+        {
+          opcode: "callConnected",
+          blockType: Scratch.BlockType.BOOLEAN,
+          text: "Call Connected",
+        },
+        {
+          opcode: "callInfo",
+          blockType: Scratch.BlockType.REPORTER,
+          text: "Call Info [INFO]",
+          arguments: {
+            INFO: {
+              menu: "callInfo",
+            },
+          },
+        },
+        {
+          opcode: "whenCallReceived",
+          blockType: Scratch.BlockType.EVENT,
+          text: "When Call Received",
+          isEdgeActivated: false,
+        },
+        {
+          opcode: "whenCallEnded",
+          blockType: Scratch.BlockType.EVENT,
+          text: "When Call Ended",
+          isEdgeActivated: false,
+        },
+        {
+          opcode: "whenCallAnswered",
+          blockType: Scratch.BlockType.EVENT,
+          text: "When Call Answered",
+          isEdgeActivated: false,
+        },
+        {
+          opcode: "whenCallDeclined",
+          blockType: Scratch.BlockType.EVENT,
+          text: "When Call Declined",
+          isEdgeActivated: false,
+        },
+        {
+          opcode: "whenCallDisconnected",
+          blockType: Scratch.BlockType.EVENT,
+          text: "When Call Failed",
+          isEdgeActivated: false,
+        }
       ],
       menus: {
         packetData: {
@@ -1208,6 +1378,15 @@ class RoturExtension {
             "data",
             "tradable",
             "hidden",
+          ],
+        },
+        callInfo: {
+          acceptReporters: true,
+          items: [
+            "caller",
+            "status",
+            "duration",
+            "timestamp",
           ],
         },
       },
@@ -1381,6 +1560,15 @@ class RoturExtension {
               this.user[packet.payload.key] = packet.payload.value;
             }
           } else {
+            if (packet.source_command === "sync_set") {
+              if (!this.syncedVariables[packet.origin]) {
+                this.syncedVariables[packet.origin] = {};
+              }
+              this.syncedVariables[packet.origin][packet.payload.key] = packet.payload.value;
+            }
+            if (packet.source_command === "sync_delete") {
+              delete this.syncedVariables[packet.origin][packet.payload.key];
+            }
             if (!this.packets[packet.val.target]) {
               this.packets[packet.val.target] = [];
             }
@@ -1404,7 +1592,7 @@ class RoturExtension {
           let room = "roturTW";
           let msg = {
             cmd: "link",
-            val: room,
+            val: [room],
             listener: "link_cfg",
           };
 
@@ -1455,6 +1643,10 @@ class RoturExtension {
     return this.authenticated && this.is_connected;
   }
 
+  firstLogin() {
+    return this.first_login;
+  }
+
   login(args) {
     if (!this.is_connected) {
       return "Not Connected";
@@ -1485,6 +1677,7 @@ class RoturExtension {
               this.ws.close();
               this.userToken = packet.val.token;
               this.user = packet.val.payload;
+              this.first_login = packet.val.first_login;
 
               delete packet.val
               delete this.user.password;
@@ -1536,6 +1729,7 @@ class RoturExtension {
             client: this.my_client,
             command: "new_account",
             id: this.userToken,
+            ip: this.client.ip,
             payload: {
               username: args.USERNAME,
               password: MD5("" + args.PASSWORD),
@@ -2189,6 +2383,76 @@ class RoturExtension {
     return JSON.stringify(
       this.client.users.filter((user) => user.match(regexp) !== null),
     );
+  }
+
+  setSyncedVariable(args) {
+    if (!this.is_connected) {
+      return "Not Connected";
+    }
+    if (!this.authenticated) {
+      return "Not Logged In";
+    }
+    this.ws.send(
+      JSON.stringify({
+        cmd: "pmsg",
+        val: {
+          client: this.my_client,
+          source_command: "sync_set",
+          payload: {
+            key: args.KEY,
+            value: args.VALUE,
+          },
+        },
+        id: args.USER,
+      }),
+    )
+    if (!this.syncedVariables[args.USER]) {
+      this.syncedVariables[args.USER] = {};
+    }
+    this.syncedVariables[args.USER][args.KEY] = args.VALUE;
+  }
+
+  getSyncedVariable(args) {
+    if (!this.is_connected) {
+      return "Not Connected";
+    }
+    if (!this.authenticated) {
+      return "Not Logged In";
+    }
+    return JSON.stringify(this.syncedVariables[args.USER][args.KEY] || "");
+  }
+
+  deleteSyncedVariable(args) {
+    if (!this.is_connected) {
+      return "Not Connected";
+    }
+    if (!this.authenticated) {
+      return "Not Logged In";
+    }
+    this.ws.send(
+      JSON.stringify({
+        cmd: "pmsg",
+        val: {
+          source_command: "sync_delete",
+          client: this.my_client,
+          payload: {
+            key: args.KEY,
+          },
+        },
+        id: args.USER,
+      }),
+    )
+    delete this.syncedVariables[args.USER][args.KEY];
+  }
+
+  getSyncedVariables(args) {
+    if (!this.is_connected) {
+      return "Not Connected";
+    }
+    if (!this.authenticated) {
+      return "Not Logged In";
+    }
+    return JSON.stringify(this.syncedVariables[args.USER] || {});
   }
 
   sendMail(args) {
