@@ -201,6 +201,10 @@ class RoturExtension {
     this.mail = {};
     this.localKeys = {};
     this.syncedVariables = {};
+    this.packetQueue = [];
+
+    this.lastJoined = "";
+    this.lastLeft = "";
 
     this.version = 4;
     this.outdated = false;
@@ -697,6 +701,31 @@ class RoturExtension {
         "---",
         {
           blockType: Scratch.BlockType.LABEL,
+          text: "Raw Packet Queue",
+        },
+        {
+          opcode: "RAWgetAllPackets",
+          blockType: Scratch.BlockType.REPORTER,
+          text: "Get All RAW Packets",
+        },
+        {
+          opcode: "RAWgetFirstPacket",
+          blockType: Scratch.BlockType.REPORTER,
+          text: "First RAW Packet",
+        },
+        {
+          opcode: "RAWdeleteFirstPacket",
+          blockType: Scratch.BlockType.COMMAND,
+          text: "Pop First RAW Packet",
+        },
+        {
+          opcode: "RAWdeleteAllPackets",
+          blockType: Scratch.BlockType.COMMAND,
+          text: "Delete All RAW Packets",
+        },
+        "---",
+        {
+          blockType: Scratch.BlockType.LABEL,
           text: "Client Information",
         },
         {
@@ -766,6 +795,28 @@ class RoturExtension {
               defaultValue: "user",
             },
           },
+        },
+        {
+          opcode: "onJoin",
+          blockType: Scratch.BlockType.EVENT,
+          text: "When A User Connects",
+          isEdgeActivated: false,
+        },
+        {
+          opcode: "onLeave",
+          blockType: Scratch.BlockType.EVENT,
+          text: "When A User Disconnects",
+          isEdgeActivated: false,
+        },
+        {
+          opcode: "onJoinUser",
+          blockType: Scratch.BlockType.REPORTER,
+          text: "Last User To Join",
+        },
+        {
+          opcode: "onLeaveUser",
+          blockType: Scratch.BlockType.REPORTER,
+          text: "Last User To Leave",
         },
         "---",
         {
@@ -1519,10 +1570,14 @@ class RoturExtension {
         } else if (packet.cmd == "ulist") {
           if (packet.mode == "add") {
             this.client.users.push(packet.val.username);
+            Scratch.vm.runtime.startHats("roturEXT_onJoin");
+            this.lastJoined = packet.val;
           } else if (packet.mode == "remove") {
             this.client.users = this.client.users.filter(
               (user) => user != packet.val.username,
             );
+            Scratch.vm.runtime.startHats("roturEXT_onLeave");
+            this.lastLeft = packet.val;
           } else if (packet.mode == "set") {
             this.client.users = [];
             for (let user of packet.val) {
@@ -1531,6 +1586,7 @@ class RoturExtension {
           }
         }
         if (packet.cmd == "pmsg") {
+          this.packetQueue.push(packet);
           packet.origin = packet.origin.username;
           delete packet.rooms;
           delete packet.cmd;
@@ -2385,6 +2441,30 @@ class RoturExtension {
     );
   }
 
+  RAWgetAllPackets() {
+    return JSON.stringify(this.packetQueue);
+  }
+
+  RAWgetFirstPacket() {
+    return JSON.stringify(this.packetQueue[0] || "{}");
+  }
+
+  RAWdeleteFirstPacket() {
+    this.packetQueue.shift();
+  }
+
+  RAWdeleteAllPackets() {
+    this.packetQueue = [];
+  }
+
+  onJoinUser() {
+    return this.lastJoined;
+  }
+
+  onLeaveUser() {
+    return this.lastLeft;
+  }
+  
   setSyncedVariable(args) {
     if (!this.is_connected) {
       return "Not Connected";
