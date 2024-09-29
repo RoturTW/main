@@ -202,6 +202,7 @@ class RoturExtension {
     this.localKeys = {};
     this.syncedVariables = {};
     this.packetQueue = [];
+    this.showDangerous = false;
 
     this.lastJoined = "";
     this.lastLeft = "";
@@ -368,11 +369,6 @@ class RoturExtension {
           },
         },
         {
-          opcode: "deleteAccount",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Delete Account",
-        },
-        {
           opcode: "logout",
           blockType: Scratch.BlockType.COMMAND,
           text: "Logout",
@@ -402,6 +398,11 @@ class RoturExtension {
           blockType: Scratch.BlockType.BUTTON,
           text: "Account Docs",
           func: "openAccountDocs",
+        },
+        {
+          opcode: "getToken",
+          blockType: Scratch.BlockType.REPORTER,
+          text: "User Token",
         },
         {
           opcode: "getkey",
@@ -1397,7 +1398,30 @@ class RoturExtension {
           blockType: Scratch.BlockType.EVENT,
           text: "When Call Failed",
           isEdgeActivated: false,
-        }
+        },
+        "---",
+        {
+          blockType: Scratch.BlockType.LABEL,
+          text: "DANGER ZONE",
+        },
+        {
+          blockType: Scratch.BlockType.BUTTON,
+          text: "Show Danger Zone",
+          func: "openDangerZone",
+          hideFromPalette: this.showDangerous,
+        },
+        {
+          blockType: Scratch.BlockType.BUTTON,
+          text: "Hide Danger Zone",
+          func: "closeDangerZone",
+          hideFromPalette: !this.showDangerous,
+        },
+        {
+          opcode: "deleteAccount",
+          blockType: Scratch.BlockType.REPORTER,
+          text: "Delete Account",
+          hideFromPalette: !this.showDangerous,
+        },
       ],
       menus: {
         packetData: {
@@ -1471,6 +1495,16 @@ class RoturExtension {
 
   openBadgesDocs() {
     window.open("https://github.com/RoturTW/main/wiki/Badges")
+  }
+
+  openDangerZone() {
+    this.showDangerous = true;
+    Scratch.vm.extensionManager.refreshBlocks();
+  }
+
+  closeDangerZone() {
+    this.showDangerous = false;
+    Scratch.vm.extensionManager.refreshBlocks();
   }
 
   // main functions
@@ -1736,9 +1770,9 @@ class RoturExtension {
               this.first_login = packet.val.first_login;
 
               delete packet.val
-              delete this.user.password;
-              delete this.user.key;
-
+              delete this.user.key
+              delete this.user.password
+              
               // friends data
               this.friends = {};
               // handle if the user has no friends :P
@@ -1879,6 +1913,10 @@ class RoturExtension {
     this.userToken = "";
     this.user = {};
     this.disconnect();
+  }
+
+  getToken() {
+    return this.userToken ?? "";
   }
 
   getkey(args) {
