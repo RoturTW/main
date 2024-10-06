@@ -207,7 +207,7 @@ class RoturExtension {
     this.lastJoined = "";
     this.lastLeft = "";
 
-    this.version = 4;
+    this.version = 5;
     this.outdated = false;
 
     fetch("https://raw.githubusercontent.com/Mistium/Origin-OS/main/Resources/info.json")
@@ -241,6 +241,7 @@ class RoturExtension {
         })
         .then((data) => {
           this.outdated = this.version < parseInt(data);
+          Scratch.vm.extensionManager.refreshBlocks();
         })
     }
   }
