@@ -1,3 +1,7 @@
+> [!IMPORTANT]
+> Your version of Scratch **Needs** to support extensions from Raw JS for this to work.
+>
+
 V4 of the rotur extension! A massively powerful way to interact with rotur accounts.
 
 This extension gives you access to a whole host of features:
