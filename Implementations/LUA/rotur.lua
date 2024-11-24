@@ -3,7 +3,7 @@ local packets = {}
 
 local client = {}
 local my_client = {
-    system = "rotur.js",
+    system = "rotur.lua",
     version = "v2"
 }
 
