@@ -1518,7 +1518,7 @@ class RoturExtension {
       }, 1000);
       return;
     }
-    if (this.ws) { wsClose; }
+    if (this.ws) { this.disconnect(); }
     this.designation = args.DESIGNATION;
     this.username = randomString(32);
     this.my_client = {
@@ -1592,6 +1592,9 @@ class RoturExtension {
   }
 
   connectToWebsocket() {
+
+    if (this.ws) this.disconnect();
+
     this.ws = new WebSocket(this.server);
     this.ws.onopen = () => {
       this.sendHandshake();
@@ -1723,6 +1726,7 @@ class RoturExtension {
   disconnect() {
     if (this.ws) {
       this.ws.close();
+      this.ws = null;
     }
   }
 
