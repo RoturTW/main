@@ -286,7 +286,7 @@ class RoturExtension {
             },
             SYSTEM: {
               type: Scratch.ArgumentType.STRING,
-              defaultValue: "rotur.js",
+              defaultValue: "rotur",
             },
             VERSION: {
               type: Scratch.ArgumentType.STRING,
@@ -1150,6 +1150,7 @@ class RoturExtension {
           opcode: "getPublicItemPages",
           blockType: Scratch.BlockType.REPORTER,
           text: "Public Item Pages",
+          disableMonitor: true
         },
         "---",
         {
@@ -1422,6 +1423,7 @@ class RoturExtension {
           blockType: Scratch.BlockType.REPORTER,
           text: "Delete Account",
           hideFromPalette: !this.showDangerous,
+          disableMonitor: true
         },
       ],
       menus: {
