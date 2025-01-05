@@ -1,0 +1,9 @@
+{
+  "server": "wss://cl4.tnix.dev",
+  "rooms": [
+    "roturTW"
+  ],
+  "installer":"https://raw.githubusercontent.com/Mistium/Origin-OS/main/OSL%20Programs/apps/System/.Install_system.json",
+  "server-name":"sys-rotur"
+  ]
+}
