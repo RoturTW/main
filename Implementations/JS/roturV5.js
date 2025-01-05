@@ -210,7 +210,7 @@ class RoturExtension {
     this.version = 5;
     this.outdated = false;
 
-    fetch("https://raw.githubusercontent.com/Mistium/Origin-OS/main/Resources/info.json")
+    fetch("https://raw.githubusercontent.com/roturTW/main/main/rotur.json")
       .then((response) => {
         if (response.ok) {
           return response.json();
@@ -219,12 +219,12 @@ class RoturExtension {
         }
       })
       .then((data) => {
-        this.accounts = data.name;
+        this.accounts = data.server_name;
         this.server = data.server;
       })
       .catch((error) => {
-        this.accounts = "sys.-origin";
-        this.server = "wss://rotur.mistium.com";
+        this.accounts = "sys-rotur";
+        this.server = "wss://ws.rotur.dev";
       });
 
     this._initializeBadges(); // Start fetching badges
