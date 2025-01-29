@@ -27,7 +27,7 @@
         "languages":["CRL"],
         "URL":"https://thatbeaverdev.github.io/Constellinux",
         "logoURL":"",
-        "showOffURL":""
+        "showOffURL":"https://thatbeaverdev.github.io/assets/Constellinux.jpeg"
     },
     "AsterOS":{
         "author":"milodev123",
@@ -69,16 +69,6 @@
         "logoURL":"",
         "showOffURL":""
     },
-    "HuopaOS":{
-        "author":"Allucat1000",
-        "designation":"hos",
-        "created":"",
-        "description":"",
-        "languages":[],
-        "URL":"",
-        "logoURL":"",
-        "showOffURL":""
-    },
     "explodeOS":{
         "author":"mio",
         "designation":"",
@@ -97,6 +87,15 @@
         "languages":["ArcMSL"],
         "URL":"https://izk-arcos.nl/",
         "logoURL":"https://cdn.arcapi.nl/branding/systemIcon.svg"
+    },
+    "Aethernos":{
+        "author":"Allucat1000",
+        "designation":"",
+        "created":"",
+        "description":"",
+        "languages":[],
+        "URL":"",
+        "logoURL":"",
+        "showOffURL":""
     }
-    
 }
