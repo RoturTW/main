@@ -6,8 +6,8 @@
         "description":"With a fully working high level programming language built right in, rendered with 0 costumes. A full desktop simulation, often mistaken for linux distrobutions and unrecognisable as a scratch project.",
         "languages":["OSL","OTS","OASM"],
         "URL":"https://origin.mistium.com",
-        "logoURL":"",
-        "showOffURL":""
+        "logoURL":"https://raw.githubusercontent.com/Mistium/Origin-OS/refs/heads/main/Resources/origin-logo-new.png",
+        "showOffURL":"https://raw.githubusercontent.com/Mistium/Origin-OS/refs/heads/main/Resources/Desktop1.png"
     },
     "Flufi-OS":{
         "author":"Pnada",
