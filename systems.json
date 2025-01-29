@@ -90,10 +90,10 @@
     },
     "Aethernos":{
         "author":"Allucat1000",
-        "designation":"",
-        "created":"",
-        "description":"",
-        "languages":[],
+        "designation":"aes",
+        "created":"25/1/2025",
+        "description":"An up-and-coming WebOS built for security.",
+        "languages":[AesApp],
         "URL":"",
         "logoURL":"",
         "showOffURL":""
