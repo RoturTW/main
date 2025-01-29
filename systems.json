@@ -6,7 +6,8 @@
         "description":"With a fully working high level programming language built right in, rendered with 0 costumes. A full desktop simulation, often mistaken for linux distrobutions and unrecognisable as a scratch project.",
         "languages":["OSL","OTS","OASM"],
         "URL":"https://origin.mistium.com",
-        "imageURL":""
+        "logoURL":"",
+        "showOffURL":""
     },
     "Flufi-OS":{
         "author":"Pnada",
@@ -15,7 +16,8 @@
         "description":"",
         "languages":["FSL"],
         "URL":"",
-        "imageURL":""
+        "logoURL":"",
+        "showOffURL":""
     },
     "Constellinux":{
         "author":"ThatBeaverDev",
@@ -24,7 +26,8 @@
         "description":"",
         "languages":["CRL"],
         "URL":"https://thatbeaverdev.github.io/Constellinux",
-        "imageURL":""
+        "logoURL":"",
+        "showOffURL":""
     },
     "AsterOS":{
         "author":"milodev123",
@@ -33,7 +36,8 @@
         "description":"",
         "languages":[],
         "URL":"",
-        "imageURL":""
+        "logoURL":"",
+        "showOffURL":""
     },
     "OliveOS":{
         "author":"justnoone",
@@ -42,7 +46,8 @@
         "description":"",
         "languages":[],
         "URL":"",
-        "imageURL":""
+        "logoURL":"",
+        "showOffURL":""
     },
     "novaOS":{
         "author":"darkdot",
@@ -51,7 +56,8 @@
         "description":"",
         "languages":[],
         "URL":"https://adthoughtsglobal.github.io",
-        "imageURL":""
+        "logoURL":"",
+        "showOffURL":""
     },
     "geec OS":{
         "author":"geec",
@@ -60,7 +66,8 @@
         "description":"",
         "languages":[],
         "URL":"",
-        "imageURL":""
+        "logoURL":"",
+        "showOffURL":""
     },
     "HuopaOS":{
         "author":"Allucat1000",
@@ -69,7 +76,8 @@
         "description":"",
         "languages":[],
         "URL":"",
-        "imageURL":""
+        "logoURL":"",
+        "showOffURL":""
     },
     "explodeOS":{
         "author":"mio",
@@ -78,7 +86,8 @@
         "description":"",
         "languages":[],
         "URL":"",
-        "imageURL":""
+        "logoURL":"",
+        "showOffURL":""
     },
     "ArcOS":{
         "author":"izkuipers",
@@ -87,7 +96,7 @@
         "description":"A super advanced Typescript-Svelte hybrid OS, with Rotur as its supporting functionality. It's got third-party applications, cloud storage and is often called 'The way Windows 11 should be'.",
         "languages":["ArcMSL"],
         "URL":"https://izk-arcos.nl/",
-        "imageURL":"https://cdn.arcapi.nl/branding/systemIcon.svg"
+        "logoURL":"https://cdn.arcapi.nl/branding/systemIcon.svg"
     }
     
 }
