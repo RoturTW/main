@@ -81,7 +81,7 @@
         "imageURL":""
     },
     "ArcOS":{
-        "author":"Izaak Kuipers",
+        "author":"izkuipers",
         "designation":"arc",
         "created":"16/05/2020",
         "description":"A super advanced Typescript-Svelte hybrid OS, with Rotur as its supporting functionality. It's got third-party applications, cloud storage and is often called 'The way Windows 11 should be'.",
