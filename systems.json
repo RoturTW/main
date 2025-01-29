@@ -5,7 +5,8 @@
         "created":"3/3/2022",
         "description":"With a fully working high level programming language built right in, rendered with 0 costumes. A full desktop simulation, often mistaken for linux distrobutions and unrecognisable as a scratch project.",
         "languages":["OSL","OTS","OASM"],
-        "URL":"https://origin.mistium.com"
+        "URL":"https://origin.mistium.com",
+        "imageURL":""
     },
     "Flufi-OS":{
         "author":"Pnada",
@@ -13,7 +14,8 @@
         "created":"",
         "description":"",
         "languages":["FSL"],
-        "URL":""
+        "URL":"",
+        "imageURL":""
     },
     "Constellinux":{
         "author":"ThatBeaverDev",
@@ -21,7 +23,8 @@
         "created":"",
         "description":"",
         "languages":["CRL"],
-        "URL":"https://thatbeaverdev.github.io/Constellinux"
+        "URL":"https://thatbeaverdev.github.io/Constellinux",
+        "imageURL":""
     },
     "AsterOS":{
         "author":"milodev123",
@@ -29,7 +32,8 @@
         "created":"",
         "description":"",
         "languages":[],
-        "URL":""
+        "URL":"",
+        "imageURL":""
     },
     "OliveOS":{
         "author":"justnoone",
@@ -37,7 +41,8 @@
         "created":"",
         "description":"",
         "languages":[],
-        "URL":""
+        "URL":"",
+        "imageURL":""
     },
     "novaOS":{
         "author":"darkdot",
@@ -45,7 +50,8 @@
         "created":"",
         "description":"",
         "languages":[],
-        "URL":"https://adthoughtsglobal.github.io"
+        "URL":"https://adthoughtsglobal.github.io",
+        "imageURL":""
     },
     "geec OS":{
         "author":"geec",
@@ -53,7 +59,8 @@
         "created":"",
         "description":"",
         "languages":[],
-        "URL":""
+        "URL":"",
+        "imageURL":""
     },
     "HuopaOS":{
         "author":"Allucat1000",
@@ -61,7 +68,8 @@
         "created":"",
         "description":"",
         "languages":[],
-        "URL":""
+        "URL":"",
+        "imageURL":""
     },
     "explodeOS":{
         "author":"mio",
@@ -69,7 +77,8 @@
         "created":"",
         "description":"",
         "languages":[],
-        "URL":""
+        "URL":"",
+        "imageURL":""
     },
     "arcOS":{
         "author":"Izaac",
@@ -77,7 +86,8 @@
         "created":"",
         "description":"",
         "languages":[],
-        "URL":""
+        "URL":"",
+        "imageURL":""
     },
     "Gabe OS":{
         "author":"Milo",
@@ -85,7 +95,8 @@
         "created":"",
         "description":"",
         "languages":[],
-        "URL":""
+        "URL":"",
+        "imageURL":""
     }
     
 }
