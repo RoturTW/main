@@ -93,7 +93,7 @@
         "designation":"aes",
         "created":"25/1/2025",
         "description":"An up-and-coming WebOS built for security.",
-        "languages":[AesApp],
+        "languages":["AesApp"],
         "URL":"",
         "logoURL":"",
         "showOffURL":""
