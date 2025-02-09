@@ -343,6 +343,32 @@ class RoturExtension {
           },
         },
         {
+          opcode: "loginMD5",
+          blockType: Scratch.BlockType.REPORTER,
+          text: "Login With Username: [USERNAME] And MD5 Password: [PASSWORD]",
+          arguments: {
+            USERNAME: {
+              type: Scratch.ArgumentType.STRING,
+              defaultValue: "test",
+            },
+            PASSWORD: {
+              type: Scratch.ArgumentType.STRING,
+              defaultValue: "password",
+            },
+          },
+        },
+        {
+          opcode: "passwordMD5",
+          blockType: Scratch.BlockType.REPORTER,
+          text: "MD5 Password: [PASSWORD]",
+          arguments: {
+            PASSWORD: {
+              type: Scratch.ArgumentType.STRING,
+              defaultValue: "password",
+            },
+          },
+        },
+        {
           opcode: "loginToken",
           blockType: Scratch.BlockType.REPORTER,
           text: "Login With Token: [TOKEN]",
@@ -1809,6 +1835,77 @@ class RoturExtension {
 
       this.ws.addEventListener("message", handleLoginResponse);
     });
+  }
+
+  loginMD5(args) {
+    if (!this.is_connected) {
+      return "Not Connected";
+    }
+    if (this.authenticated) {
+      return "Already Logged In";
+    }
+    return new Promise((resolve, reject) => {
+      this.ws.send(
+        JSON.stringify({
+          cmd: "pmsg",
+          val: {
+            ip: this.client.ip,
+            client: this.my_client,
+            command: "login",
+            id: this.userToken,
+            payload: [args.USERNAME, "" + args.PASSWORD],
+          },
+          id: this.accounts,
+        }),
+      );
+
+      const handleLoginResponse = (event) => {
+        let packet = JSON.parse(event.data);
+        if (packet?.origin?.username === this.accounts) {
+          if (packet.val?.source_command === "login") {
+            if (typeof packet.val?.payload === "object") {
+              this.ws.close();
+              this.userToken = packet.val.token;
+              this.user = packet.val.payload;
+              this.first_login = packet.val.first_login;
+
+              delete packet.val
+              delete this.user.key
+              delete this.user.password
+              
+              // friends data
+              this.friends = {};
+              // handle if the user has no friends :P
+              if (!this.user["sys.friends"]) this.user["sys.friends"] = [];
+              if (!this.user["sys.requests"]) this.user["sys.requests"] = [];
+
+              this.friends.list = this.user["sys.friends"];
+              this.friends.requests = this.user["sys.requests"];
+              delete this.user.friends;
+              delete this.user.requests;
+
+              // setup username for reconnect
+              this.username = args.USERNAME + "§" + randomString(10);
+              this.connectToWebsocket();
+              while (!this.is_connected) { }
+              this.authenticated = true;
+              Scratch.vm.runtime.startHats("roturEXT_whenAuthenticated");
+              resolve(`Logged in as ${args.USERNAME}`);
+            } else {
+              this.authenticated = false;
+              reject(`Failed to login as ${args.USERNAME}`);
+            }
+            this.ws.removeEventListener("message", handleLoginResponse);
+          }
+        }
+      };
+
+      this.ws.addEventListener("message", handleLoginResponse);
+    });
+  }
+
+  passwordMD5(args) {
+    return MD5("" + args.PASSWORD);
   }
 
   register(args) {
