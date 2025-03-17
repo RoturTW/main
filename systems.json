@@ -12,12 +12,12 @@
     "Flufi-OS":{
         "author":"Pnada",
         "designation":"flf",
-        "created":"",
-        "description":"",
-        "languages":["FSL"],
-        "URL":"",
+        "created":"11/5/2024",
+        "description":"A fully pen based turbowarp os with 2 languages, aiming to make a full desktop environment :3",
+        "languages":["FBL","CFBL"],
+        "URL":"https://github.com/ThePandaDever/Flufi-OS",
         "logoURL":"",
-        "showOffURL":""
+        "showOffURL":"https://raw.githubusercontent.com/ThePandaDever/Flufi-OS/refs/heads/main/Assets/flufios.png"
     },
     "AsterOS":{
         "author":"milodev123",
