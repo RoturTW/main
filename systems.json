@@ -19,14 +19,14 @@
         "logoURL":"",
         "showOffURL":"https://raw.githubusercontent.com/ThePandaDever/Flufi-OS/refs/heads/main/Assets/flufios.png"
     },
-    "AsterOS":{
-        "author":"milodev123",
-        "designation":"",
+    "novaOS":{
+        "author":"darkdot",
+        "designation":"nov",
         "created":"",
-        "description":"",
+        "description":"The powerful, stable, fully local and source-available web system, made for every modern browser and device.",
         "languages":[],
-        "URL":"",
-        "logoURL":"",
+        "URL":"https://adthoughtsglobal.github.io",
+        "logoURL":"https://adthoughtsglobal.github.io/Nova-OS/n.png",
         "showOffURL":""
     },
     "OliveOS":{
@@ -39,28 +39,8 @@
         "logoURL":"",
         "showOffURL":""
     },
-    "novaOS":{
-        "author":"darkdot",
-        "designation":"nov",
-        "created":"",
-        "description":"The powerful, stable, fully local and source-available web system, made for every modern browser and device.",
-        "languages":[],
-        "URL":"https://adthoughtsglobal.github.io",
-        "logoURL":"https://adthoughtsglobal.github.io/Nova-OS/n.png",
-        "showOffURL":""
-    },
     "geec OS":{
         "author":"geec",
-        "designation":"",
-        "created":"",
-        "description":"",
-        "languages":[],
-        "URL":"",
-        "logoURL":"",
-        "showOffURL":""
-    },
-    "explodeOS":{
-        "author":"mio",
         "designation":"",
         "created":"",
         "description":"",
