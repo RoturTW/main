@@ -1,176 +1,80 @@
-MD5 = function (e) {
-  function h(a, b) {
-    var c, d, e, f, g;
-    e = a & 2147483648;
-    f = b & 2147483648;
-    c = a & 1073741824;
-    d = b & 1073741824;
-    g = (a & 1073741823) + (b & 1073741823);
-    return c & d
-      ? g ^ 2147483648 ^ e ^ f
-      : c | d
-        ? g & 1073741824
-          ? g ^ 3221225472 ^ e ^ f
-          : g ^ 1073741824 ^ e ^ f
-        : g ^ e ^ f;
-  }
+// Name: Rotur.js
+// Author: Mistium
+// Description: Utilise rotur in your projects
 
-  function k(a, b, c, d, e, f, g) {
-    a = h(a, h(h((b & c) | (~b & d), e), g));
-    return h((a << f) | (a >>> (32 - f)), b);
-  }
+// License: MPL-2.0
+// This Source Code is subject to the terms of the Mozilla Public License, v2.0,
+// If a copy of the MPL was not distributed with this file,
+// Then you can obtain one at https://mozilla.org/MPL/2.0/
 
-  function l(a, b, c, d, e, f, g) {
-    a = h(a, h(h((b & d) | (c & ~d), e), g));
-    return h((a << f) | (a >>> (32 - f)), b);
-  }
+// Block utilities for creating blocks with less code
+const blocks = {
+  reporter: function (opcode, text, args = {}, options = {}) {
+    return {
+      opcode,
+      blockType: Scratch.BlockType.REPORTER,
+      text,
+      arguments: args,
+      ...options
+    };
+  },
 
-  function m(a, b, d, c, e, f, g) {
-    a = h(a, h(h(b ^ d ^ c, e), g));
-    return h((a << f) | (a >>> (32 - f)), b);
-  }
+  command: function (opcode, text, args = {}, options = {}) {
+    return {
+      opcode,
+      blockType: Scratch.BlockType.COMMAND,
+      text,
+      arguments: args,
+      ...options
+    };
+  },
 
-  function n(a, b, d, c, e, f, g) {
-    a = h(a, h(h(d ^ (b | ~c), e), g));
-    return h((a << f) | (a >>> (32 - f)), b);
-  }
+  boolean: function (opcode, text, args = {}, options = {}) {
+    return {
+      opcode,
+      blockType: Scratch.BlockType.BOOLEAN,
+      text,
+      arguments: args,
+      ...options
+    };
+  },
 
-  function p(a) {
-    var b = "",
-      d = "",
-      c;
-    for (c = 0; 3 >= c; c++)
-      (d = (a >>> (8 * c)) & 255),
-        (d = "0" + d.toString(16)),
-        (b += d.substr(d.length - 2, 2));
-    return b;
-  }
-  var f = [],
-    q,
-    r,
-    s,
-    t,
-    a,
-    b,
-    c,
-    d;
-  e = (function (a) {
-    a = a.replace(/\r\n/g, "\n");
-    for (var b = "", d = 0; d < a.length; d++) {
-      var c = a.charCodeAt(d);
-      128 > c
-        ? (b += String.fromCharCode(c))
-        : (127 < c && 2048 > c
-          ? (b += String.fromCharCode((c >> 6) | 192))
-          : ((b += String.fromCharCode((c >> 12) | 224)),
-            (b += String.fromCharCode(((c >> 6) & 63) | 128))),
-          (b += String.fromCharCode((c & 63) | 128)));
-    }
-    return b;
-  })(e);
-  f = (function (b) {
-    var a,
-      c = b.length;
-    a = c + 8;
-    for (
-      var d = 16 * ((a - (a % 64)) / 64 + 1), e = Array(d - 1), f = 0, g = 0;
-      g < c;
+  event: function (opcode, text, options = {}) {
+    return {
+      opcode,
+      blockType: Scratch.BlockType.EVENT,
+      text,
+      isEdgeActivated: false,
+      ...options
+    };
+  },
 
-    )
-      (a = (g - (g % 4)) / 4),
-        (f = (g % 4) * 8),
-        (e[a] |= b.charCodeAt(g) << f),
-        g++;
-    a = (g - (g % 4)) / 4;
-    e[a] |= 128 << ((g % 4) * 8);
-    e[d - 2] = c << 3;
-    e[d - 1] = c >>> 29;
-    return e;
-  })(e);
-  a = 1732584193;
-  b = 4023233417;
-  c = 2562383102;
-  d = 271733878;
-  for (e = 0; e < f.length; e += 16)
-    (q = a),
-      (r = b),
-      (s = c),
-      (t = d),
-      (a = k(a, b, c, d, f[e + 0], 7, 3614090360)),
-      (d = k(d, a, b, c, f[e + 1], 12, 3905402710)),
-      (c = k(c, d, a, b, f[e + 2], 17, 606105819)),
-      (b = k(b, c, d, a, f[e + 3], 22, 3250441966)),
-      (a = k(a, b, c, d, f[e + 4], 7, 4118548399)),
-      (d = k(d, a, b, c, f[e + 5], 12, 1200080426)),
-      (c = k(c, d, a, b, f[e + 6], 17, 2821735955)),
-      (b = k(b, c, d, a, f[e + 7], 22, 4249261313)),
-      (a = k(a, b, c, d, f[e + 8], 7, 1770035416)),
-      (d = k(d, a, b, c, f[e + 9], 12, 2336552879)),
-      (c = k(c, d, a, b, f[e + 10], 17, 4294925233)),
-      (b = k(b, c, d, a, f[e + 11], 22, 2304563134)),
-      (a = k(a, b, c, d, f[e + 12], 7, 1804603682)),
-      (d = k(d, a, b, c, f[e + 13], 12, 4254626195)),
-      (c = k(c, d, a, b, f[e + 14], 17, 2792965006)),
-      (b = k(b, c, d, a, f[e + 15], 22, 1236535329)),
-      (a = l(a, b, c, d, f[e + 1], 5, 4129170786)),
-      (d = l(d, a, b, c, f[e + 6], 9, 3225465664)),
-      (c = l(c, d, a, b, f[e + 11], 14, 643717713)),
-      (b = l(b, c, d, a, f[e + 0], 20, 3921069994)),
-      (a = l(a, b, c, d, f[e + 5], 5, 3593408605)),
-      (d = l(d, a, b, c, f[e + 10], 9, 38016083)),
-      (c = l(c, d, a, b, f[e + 15], 14, 3634488961)),
-      (b = l(b, c, d, a, f[e + 4], 20, 3889429448)),
-      (a = l(a, b, c, d, f[e + 9], 5, 568446438)),
-      (d = l(d, a, b, c, f[e + 14], 9, 3275163606)),
-      (c = l(c, d, a, b, f[e + 3], 14, 4107603335)),
-      (b = l(b, c, d, a, f[e + 8], 20, 1163531501)),
-      (a = l(a, b, c, d, f[e + 13], 5, 2850285829)),
-      (d = l(d, a, b, c, f[e + 2], 9, 4243563512)),
-      (c = l(c, d, a, b, f[e + 7], 14, 1735328473)),
-      (b = l(b, c, d, a, f[e + 12], 20, 2368359562)),
-      (a = m(a, b, c, d, f[e + 5], 4, 4294588738)),
-      (d = m(d, a, b, c, f[e + 8], 11, 2272392833)),
-      (c = m(c, d, a, b, f[e + 11], 16, 1839030562)),
-      (b = m(b, c, d, a, f[e + 14], 23, 4259657740)),
-      (a = m(a, b, c, d, f[e + 1], 4, 2763975236)),
-      (d = m(d, a, b, c, f[e + 4], 11, 1272893353)),
-      (c = m(c, d, a, b, f[e + 7], 16, 4139469664)),
-      (b = m(b, c, d, a, f[e + 10], 23, 3200236656)),
-      (a = m(a, b, c, d, f[e + 13], 4, 681279174)),
-      (d = m(d, a, b, c, f[e + 0], 11, 3936430074)),
-      (c = m(c, d, a, b, f[e + 3], 16, 3572445317)),
-      (b = m(b, c, d, a, f[e + 6], 23, 76029189)),
-      (a = m(a, b, c, d, f[e + 9], 4, 3654602809)),
-      (d = m(d, a, b, c, f[e + 12], 11, 3873151461)),
-      (c = m(c, d, a, b, f[e + 15], 16, 530742520)),
-      (b = m(b, c, d, a, f[e + 2], 23, 3299628645)),
-      (a = n(a, b, c, d, f[e + 0], 6, 4096336452)),
-      (d = n(d, a, b, c, f[e + 7], 10, 1126891415)),
-      (c = n(c, d, a, b, f[e + 14], 15, 2878612391)),
-      (b = n(b, c, d, a, f[e + 5], 21, 4237533241)),
-      (a = n(a, b, c, d, f[e + 12], 6, 1700485571)),
-      (d = n(d, a, b, c, f[e + 3], 10, 2399980690)),
-      (c = n(c, d, a, b, f[e + 10], 15, 4293915773)),
-      (b = n(b, c, d, a, f[e + 1], 21, 2240044497)),
-      (a = n(a, b, c, d, f[e + 8], 6, 1873313359)),
-      (d = n(d, a, b, c, f[e + 15], 10, 4264355552)),
-      (c = n(c, d, a, b, f[e + 6], 15, 2734768916)),
-      (b = n(b, c, d, a, f[e + 13], 21, 1309151649)),
-      (a = n(a, b, c, d, f[e + 4], 6, 4149444226)),
-      (d = n(d, a, b, c, f[e + 11], 10, 3174756917)),
-      (c = n(c, d, a, b, f[e + 2], 15, 718787259)),
-      (b = n(b, c, d, a, f[e + 9], 21, 3951481745)),
-      (a = h(a, q)),
-      (b = h(b, r)),
-      (c = h(c, s)),
-      (d = h(d, t));
-  return (p(a) + p(b) + p(c) + p(d)).toLowerCase();
+  button: function (text, func, options = {}) {
+    return {
+      blockType: Scratch.BlockType.BUTTON,
+      text,
+      func,
+      ...options
+    };
+  },
+
+  label: function (text) {
+    return {
+      blockType: Scratch.BlockType.LABEL,
+      text
+    };
+  },
+
+  separator: function () {
+    return "---";
+  }
 };
+
+MD5 = function (r) { function n(r, n) { var t, o, e, u, f; return e = 2147483648 & r, u = 2147483648 & n, f = (1073741823 & r) + (1073741823 & n), (t = 1073741824 & r) & (o = 1073741824 & n) ? 2147483648 ^ f ^ e ^ u : t | o ? 1073741824 & f ? 3221225472 ^ f ^ e ^ u : 1073741824 ^ f ^ e ^ u : f ^ e ^ u } function t(r, t, o, e, u, f, a) { return r = n(r, n(n(t & o | ~t & e, u), a)), n(r << f | r >>> 32 - f, t) } function o(r, t, o, e, u, f, a) { return r = n(r, n(n(t & e | o & ~e, u), a)), n(r << f | r >>> 32 - f, t) } function e(r, t, o, e, u, f, a) { return r = n(r, n(n(t ^ o ^ e, u), a)), n(r << f | r >>> 32 - f, t) } function u(r, t, o, e, u, f, a) { return r = n(r, n(n(o ^ (t | ~e), u), a)), n(r << f | r >>> 32 - f, t) } function f(r) { var n, t = "", o = ""; for (n = 0; 3 >= n; n++)t += (o = "0" + (o = r >>> 8 * n & 255).toString(16)).substr(o.length - 2, 2); return t } var a, i, C, c, g, h, d, v, S; for (r = function (r) { r = r.replace(/\r\n/g, "\n"); for (var n = "", t = 0; t < r.length; t++) { var o = r.charCodeAt(t); 128 > o ? n += String.fromCharCode(o) : (127 < o && 2048 > o ? n += String.fromCharCode(o >> 6 | 192) : (n += String.fromCharCode(o >> 12 | 224), n += String.fromCharCode(o >> 6 & 63 | 128)), n += String.fromCharCode(63 & o | 128)) } return n }(r), a = function (r) { for (var n, t = r.length, o = 16 * (((n = t + 8) - n % 64) / 64 + 1), e = Array(o - 1), u = 0, f = 0; f < t;)u = f % 4 * 8, e[n = (f - f % 4) / 4] |= r.charCodeAt(f) << u, f++; return e[n = (f - f % 4) / 4] |= 128 << f % 4 * 8, e[o - 2] = t << 3, e[o - 1] = t >>> 29, e }(r), h = 1732584193, d = 4023233417, v = 2562383102, S = 271733878, r = 0; r < a.length; r += 16)i = h, C = d, c = v, g = S, h = t(h, d, v, S, a[r + 0], 7, 3614090360), S = t(S, h, d, v, a[r + 1], 12, 3905402710), v = t(v, S, h, d, a[r + 2], 17, 606105819), d = t(d, v, S, h, a[r + 3], 22, 3250441966), h = t(h, d, v, S, a[r + 4], 7, 4118548399), S = t(S, h, d, v, a[r + 5], 12, 1200080426), v = t(v, S, h, d, a[r + 6], 17, 2821735955), d = t(d, v, S, h, a[r + 7], 22, 4249261313), h = t(h, d, v, S, a[r + 8], 7, 1770035416), S = t(S, h, d, v, a[r + 9], 12, 2336552879), v = t(v, S, h, d, a[r + 10], 17, 4294925233), d = t(d, v, S, h, a[r + 11], 22, 2304563134), h = t(h, d, v, S, a[r + 12], 7, 1804603682), S = t(S, h, d, v, a[r + 13], 12, 4254626195), v = t(v, S, h, d, a[r + 14], 17, 2792965006), h = o(h, d = t(d, v, S, h, a[r + 15], 22, 1236535329), v, S, a[r + 1], 5, 4129170786), S = o(S, h, d, v, a[r + 6], 9, 3225465664), v = o(v, S, h, d, a[r + 11], 14, 643717713), d = o(d, v, S, h, a[r + 0], 20, 3921069994), h = o(h, d, v, S, a[r + 5], 5, 3593408605), S = o(S, h, d, v, a[r + 10], 9, 38016083), v = o(v, S, h, d, a[r + 15], 14, 3634488961), d = o(d, v, S, h, a[r + 4], 20, 3889429448), h = o(h, d, v, S, a[r + 9], 5, 568446438), S = o(S, h, d, v, a[r + 14], 9, 3275163606), v = o(v, S, h, d, a[r + 3], 14, 4107603335), d = o(d, v, S, h, a[r + 8], 20, 1163531501), h = o(h, d, v, S, a[r + 13], 5, 2850285829), S = o(S, h, d, v, a[r + 2], 9, 4243563512), v = o(v, S, h, d, a[r + 7], 14, 1735328473), h = e(h, d = o(d, v, S, h, a[r + 12], 20, 2368359562), v, S, a[r + 5], 4, 4294588738), S = e(S, h, d, v, a[r + 8], 11, 2272392833), v = e(v, S, h, d, a[r + 11], 16, 1839030562), d = e(d, v, S, h, a[r + 14], 23, 4259657740), h = e(h, d, v, S, a[r + 1], 4, 2763975236), S = e(S, h, d, v, a[r + 4], 11, 1272893353), v = e(v, S, h, d, a[r + 7], 16, 4139469664), d = e(d, v, S, h, a[r + 10], 23, 3200236656), h = e(h, d, v, S, a[r + 13], 4, 681279174), S = e(S, h, d, v, a[r + 0], 11, 3936430074), v = e(v, S, h, d, a[r + 3], 16, 3572445317), d = e(d, v, S, h, a[r + 6], 23, 76029189), h = e(h, d, v, S, a[r + 9], 4, 3654602809), S = e(S, h, d, v, a[r + 12], 11, 3873151461), v = e(v, S, h, d, a[r + 15], 16, 530742520), h = u(h, d = e(d, v, S, h, a[r + 2], 23, 3299628645), v, S, a[r + 0], 6, 4096336452), S = u(S, h, d, v, a[r + 7], 10, 1126891415), v = u(v, S, h, d, a[r + 14], 15, 2878612391), d = u(d, v, S, h, a[r + 5], 21, 4237533241), h = u(h, d, v, S, a[r + 12], 6, 1700485571), S = u(S, h, d, v, a[r + 3], 10, 2399980690), v = u(v, S, h, d, a[r + 10], 15, 4293915773), d = u(d, v, S, h, a[r + 1], 21, 2240044497), h = u(h, d, v, S, a[r + 8], 6, 1873313359), S = u(S, h, d, v, a[r + 15], 10, 4264355552), v = u(v, S, h, d, a[r + 6], 15, 2734768916), d = u(d, v, S, h, a[r + 13], 21, 1309151649), h = u(h, d, v, S, a[r + 4], 6, 4149444226), S = u(S, h, d, v, a[r + 11], 10, 3174756917), v = u(v, S, h, d, a[r + 2], 15, 718787259), d = u(d, v, S, h, a[r + 9], 21, 3951481745), h = n(h, i), d = n(d, C), v = n(v, c), S = n(S, g); return (f(h) + f(d) + f(v) + f(S)).toLowerCase() };
 
 randomString = function (length) {
   var result = "";
-  var characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   var charactersLength = characters.length;
   for (var i = 0; i < length; i++) {
     result += characters.charAt(Math.floor(Math.random() * charactersLength));
@@ -212,11 +116,8 @@ class RoturExtension {
 
     fetch("https://raw.githubusercontent.com/Mistium/Origin-OS/main/Resources/info.json")
       .then((response) => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error('Network response was not ok');
-        }
+        if (response.ok) return response.json();
+        else throw new Error('Network response was not ok');
       })
       .then((data) => {
         this.accounts = data.name;
@@ -233,16 +134,16 @@ class RoturExtension {
     if (typeof window.scaffolding !== "object") {
       fetch("https://raw.githubusercontent.com/RoturTW/main/main/Implementations/SCRATCH/version.txt")
         .then((response) => {
-          if (response.ok) {
-            return response.text();
-          } else {
-            throw new Error('Network response was not ok');
-          }
+          if (response.ok) return response.text();
+          else throw new Error('Network response was not ok');
         })
         .then((data) => {
           this.outdated = this.version < parseInt(data);
           Scratch.vm.extensionManager.refreshBlocks();
         })
+        .catch((error) => {
+          console.error('Error fetching version:', error);
+        });
     }
   }
 
@@ -253,9 +154,8 @@ class RoturExtension {
   async _getBadges() {
     try {
       const response = await fetch("https://raw.githubusercontent.com/RoturTW/Badges/main/badges.json");
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
+      if (!response.ok) throw new Error('Network response was not ok');
+
       const data = await response.json();
       this.badges = data;
     } catch (error) {
@@ -269,1188 +169,511 @@ class RoturExtension {
       name: "RoturV5",
       color1: "#403041",
       blocks: [
-        {
-          blockType: Scratch.BlockType.BUTTON,
-          text: "New Update Available",
-          func: "openUpdate",
-          hideFromPalette: !this.outdated,
-        },
-        {
-          opcode: "connectToServer",
-          blockType: Scratch.BlockType.COMMAND,
-          text: "Connect To Server With Designation: [DESIGNATION], System: [SYSTEM] And Version: [VERSION]",
-          arguments: {
-            DESIGNATION: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "rtr",
-            },
-            SYSTEM: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "rotur",
-            },
-            VERSION: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "v5",
-            },
+        blocks.button("New Update Available", "openUpdate", {
+          hideFromPalette: !this.outdated
+        }),
+        blocks.command("connectToServer", "Connect To Server With Designation: [DESIGNATION], System: [SYSTEM] And Version: [VERSION]", {
+          DESIGNATION: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "rtr",
           },
-        },
-        {
-          opcode: "serverOnline",
-          blockType: Scratch.BlockType.BOOLEAN,
-          text: "Account Server Online",
-        },
-        {
-          opcode: "disconnect",
-          blockType: Scratch.BlockType.COMMAND,
-          text: "Disconnect From Server",
-        },
-        {
-          opcode: "connected",
-          blockType: Scratch.BlockType.BOOLEAN,
-          text: "Connected To Server",
-        },
-        "---",
-        {
-          opcode: "whenConnected",
-          blockType: Scratch.BlockType.EVENT,
-          text: "When Connected To Server",
-          isEdgeActivated: false,
-        },
-        {
-          opcode: "whenDisconnected",
-          blockType: Scratch.BlockType.EVENT,
-          text: "When Disconnected From Server",
-          isEdgeActivated: false,
-        },
-        "---",
-        {
-          blockType: Scratch.BlockType.LABEL,
-          text: "Authentication",
-        },
-        {
-          opcode: "login",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Login With Username: [USERNAME] And Password: [PASSWORD]",
-          arguments: {
-            USERNAME: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "test",
-            },
-            PASSWORD: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "password",
-            },
+          SYSTEM: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "rotur",
           },
-        },
-        {
-          opcode: "loginMD5",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Login With Username: [USERNAME] And MD5 Password: [PASSWORD]",
-          arguments: {
-            USERNAME: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "test",
-            },
-            PASSWORD: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "password",
-            },
+          VERSION: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "v5",
           },
-        },
-        {
-          opcode: "passwordMD5",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "MD5 Password: [PASSWORD]",
-          arguments: {
-            PASSWORD: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "password",
-            },
+        }),
+        blocks.boolean("serverOnline", "Account Server Online"),
+        blocks.command("disconnect", "Disconnect From Server"),
+        blocks.boolean("connected", "Connected To Server"),
+        blocks.separator(),
+        blocks.event("whenConnected", "When Connected To Server"),
+        blocks.event("whenDisconnected", "When Disconnected From Server"),
+        blocks.separator(),
+        blocks.label("Authentication"),
+        blocks.reporter("login", "Login With Username: [USERNAME] And Password: [PASSWORD]", {
+          USERNAME: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "test",
           },
-        },
-        {
-          opcode: "loginToken",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Login With Token: [TOKEN]",
-          arguments: {
-            TOKEN: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "token",
-            },
+          PASSWORD: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "password",
           },
-          hideFromPalette: true,
-        },
-        {
-          opcode: "register",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Register With Username: [USERNAME] And Password: [PASSWORD]",
-          arguments: {
-            USERNAME: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "test",
-            },
-            PASSWORD: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "password",
-            },
+        }),
+        blocks.reporter("loginMd5", "Login With Username: [USERNAME] And Password: [PASSWORD] (MD5)", {
+          USERNAME: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "test",
           },
-        },
-        {
-          opcode: "logout",
-          blockType: Scratch.BlockType.COMMAND,
-          text: "Logout",
-        },
-        {
-          opcode: "loggedIn",
-          blockType: Scratch.BlockType.BOOLEAN,
-          text: "Authenticated",
-        },
-        {
-          opcode: "firstLogin",
-          blockType: Scratch.BlockType.BOOLEAN,
-          text: "Is This The First Login Of Today?",
-        },
-        {
-          opcode: "whenAuthenticated",
-          blockType: Scratch.BlockType.EVENT,
-          text: "When Authenticated",
-          isEdgeActivated: false,
-        },
-        "---",
-        {
-          blockType: Scratch.BlockType.LABEL,
-          text: "Account Information",
-        },
-        {
-          blockType: Scratch.BlockType.BUTTON,
-          text: "Account Docs",
-          func: "openAccountDocs",
-        },
-        {
-          opcode: "getToken",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "User Token",
-        },
-        {
-          opcode: "getkey",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Get [KEY]",
-          arguments: {
-            KEY: {
-              menu: "keys",
-            },
+          PASSWORD: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "md5password",
           },
-        },
-        {
-          opcode: "setkey",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Set [KEY] To [VALUE]",
-          arguments: {
-            KEY: {
-              menu: "keys",
-            },
-            VALUE: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "value",
-            },
+        }),
+        blocks.reporter("loginToken", "Login With Token: [TOKEN]", {
+          TOKEN: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "token",
           },
-        },
-        {
-          opcode: "keyExists",
-          blockType: Scratch.BlockType.BOOLEAN,
-          text: "Key [KEY] Exists",
-          arguments: {
-            KEY: {
-              menu: "keys",
-            },
+        }, { hideFromPalette: true }),
+        blocks.reporter("register", "Register With Username: [USERNAME] And Password: [PASSWORD]", {
+          USERNAME: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "test",
           },
-        },
-        {
-          opcode: "getkeys",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Get All Keys",
-        },
-        {
-          opcode: "getvalues",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Get All Values",
-        },
-        {
-          opcode: "getAccount",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Get Account Object",
-        },
-        {
-          opcode: "whenAccountUpdate",
-          blockType: Scratch.BlockType.EVENT,
-          text: "When Account Updated",
-          isEdgeActivated: false,
-        },
-        "---",
-        {
-          blockType: Scratch.BlockType.LABEL,
-          text: "Data Storage",
-        },
-        {
-          blockType: Scratch.BlockType.BUTTON,
-          text: "Data Storage Docs",
-          func: "openStorageDocs",
-        },
-        {
-          opcode: "setStorageID",
-          blockType: Scratch.BlockType.COMMAND,
-          text: "Set Storage Id To [ID]",
-          arguments: {
-            ID: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "id",
-            },
+          PASSWORD: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "password",
           },
-        },
-        {
-          opcode: "storageIdExists",
-          blockType: Scratch.BlockType.BOOLEAN,
-          text: "Storage ID Has Been Set",
-        },
-        {
-          opcode: "getStorageID",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Storage ID",
-        },
-        {
-          opcode: "getStorageKey",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Get Key From Storage [KEY]",
-          arguments: {
-            KEY: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "key",
-            },
+        }),
+        blocks.command("logout", "Logout"),
+        blocks.boolean("loggedIn", "Authenticated"),
+        blocks.boolean("firstLogin", "Is This The First Login Of Today?"),
+        blocks.event("whenAuthenticated", "When Authenticated"),
+        blocks.separator(),
+        blocks.label("Account Information"),
+        blocks.button("Account Docs", "openAccountDocs"),
+        blocks.reporter("getToken", "User Token"),
+        blocks.reporter("getkey", "Get [KEY]", {
+          KEY: {
+            menu: "keys",
           },
-        },
-        {
-          opcode: "setStorageKey",
-          blockType: Scratch.BlockType.COMMAND,
-          text: "Set Key [KEY] To [VALUE] In Storage",
-          arguments: {
-            KEY: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "key",
-            },
-            VALUE: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "value",
-            },
+        }),
+        blocks.reporter("setkey", "Set [KEY] To [VALUE]", {
+          KEY: {
+            menu: "keys",
           },
-        },
-        {
-          opcode: "existsStorageKey",
-          blockType: Scratch.BlockType.BOOLEAN,
-          text: "Key [KEY] Exists In Storage",
-          arguments: {
-            KEY: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "key",
-            },
+          VALUE: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "value",
           },
-        },
-        {
-          opcode: "deleteStorageKey",
-          blockType: Scratch.BlockType.COMMAND,
-          text: "Delete Key [KEY] From Storage",
-          arguments: {
-            KEY: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "key",
-            },
+        }),
+        blocks.boolean("keyExists", "Key [KEY] Exists", {
+          KEY: {
+            menu: "keys",
           },
-        },
-        {
-          opcode: "getStorageKeys",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Get All Keys From Storage",
-        },
-        {
-          opcode: "getStorageValues",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Get All Values From Storage",
-        },
-        {
-          opcode: "clearStorage",
-          blockType: Scratch.BlockType.COMMAND,
-          text: "Clear Storage",
-        },
-        {
-          blockType: Scratch.BlockType.LABEL,
-          text: "Storage Information",
-        },
-        {
-          opcode: "storageUsage",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Storage Usage (Characters)",
-        },
-        {
-          opcode: "storageLimit",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Storage Limit (Characters)",
-        },
-        {
-          opcode: "storageRemaining",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Storage Remaining (Characters)",
-        },
-        {
-          opcode: "accountStorageUsage",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Account Storage Usage (Characters)",
-        },
-        {
-          opcode: "accountStorageLimit",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Account Storage Limit (Characters)",
-        },
-        {
-          opcode: "accountStorageRemaining",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Account Storage Remaining (Characters)",
-        },
-        "---",
-        {
-          blockType: Scratch.BlockType.LABEL,
-          text: "Messaging",
-        },
-        {
-          opcode: "sendMessage",
-          blockType: Scratch.BlockType.COMMAND,
-          text: "Send Message [PAYLOAD] To User [USER] On Port: [TARGET] From Port: [SOURCE]",
-          arguments: {
-            PAYLOAD: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "Hello",
-            },
-            USER: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "targetUser",
-            },
-            TARGET: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "port",
-            },
-            SOURCE: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "port",
-            },
+        }),
+        blocks.reporter("getkeys", "Get All Keys"),
+        blocks.reporter("getvalues", "Get All Values"),
+        blocks.reporter("getAccount", "Get Account Object"),
+        blocks.event("whenAccountUpdate", "When Account Updated"),
+        blocks.separator(),
+        blocks.label("Data Storage"),
+        blocks.button("Data Storage Docs", "openStorageDocs"),
+        blocks.command("setStorageID", "Set Storage Id To [ID]", {
+          ID: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "id",
           },
-        },
-        {
-          opcode: "whenMessageReceived",
-          blockType: Scratch.BlockType.EVENT,
-          text: "When Message Received",
-          isEdgeActivated: false,
-        },
-        {
-          opcode: "getPacketsFromTarget",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Get Packets From Port [TARGET]",
-          arguments: {
-            TARGET: {
-              menu: "targets",
-            },
+        }),
+        blocks.boolean("storageIdExists", "Storage ID Has Been Set"),
+        blocks.reporter("getStorageID", "Storage ID"),
+        blocks.reporter("getStorageKey", "Get Key From Storage [KEY]", {
+          KEY: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "key",
           },
-        },
-        {
-          opcode: "getFirstPacketOnTarget",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "First Packet On Port [TARGET]",
-          arguments: {
-            TARGET: {
-              menu: "targets",
-            },
+        }),
+        blocks.command("setStorageKey", "Set Key [KEY] To [VALUE] In Storage", {
+          KEY: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "key",
           },
-        },
-        {
-          opcode: "dataOfFirstPacketOnTarget",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "[DATA] Of First Packet On Port [TARGET]",
-          arguments: {
-            DATA: {
-              menu: "packetData",
-            },
-            TARGET: {
-              menu: "targets",
-            },
+          VALUE: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "value",
           },
-        },
-        {
-          opcode: "numberOfPacketsOnTarget",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Number Of Packets On Port [TARGET]",
-          arguments: {
-            TARGET: {
-              menu: "targets",
-            },
+        }),
+        blocks.boolean("existsStorageKey", "Key [KEY] Exists In Storage", {
+          KEY: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "key",
           },
-        },
-        {
-          opcode: "getAllTargets",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "All Open Targets",
-        },
-        {
-          opcode: "getAllPackets",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "All Packets",
-        },
-        {
-          opcode: "deleteFirstPacketOnTarget",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Pop First Of Port [TARGET]",
-          arguments: {
-            TARGET: {
-              menu: "targets",
-            },
+        }),
+        blocks.command("deleteStorageKey", "Delete Key [KEY] From Storage", {
+          KEY: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "key",
           },
-        },
-        {
-          opcode: "deletePacketsOnTarget",
-          blockType: Scratch.BlockType.COMMAND,
-          text: "Delete All Packets On Port [TARGET]",
-          arguments: {
-            TARGET: {
-              menu: "targets",
-            },
+        }),
+        blocks.reporter("getStorageKeys", "Get All Keys From Storage"),
+        blocks.reporter("getStorageValues", "Get All Values From Storage"),
+        blocks.command("clearStorage", "Clear Storage"),
+        blocks.label("Storage Information"),
+        blocks.reporter("storageUsage", "Storage Usage (Characters)"),
+        blocks.reporter("storageLimit", "Storage Limit (Characters)"),
+        blocks.reporter("storageRemaining", "Storage Remaining (Characters)"),
+        blocks.reporter("accountStorageUsage", "Account Storage Usage (Characters)"),
+        blocks.reporter("accountStorageLimit", "Account Storage Limit (Characters)"),
+        blocks.reporter("accountStorageRemaining", "Account Storage Remaining (Characters)"),
+        blocks.separator(),
+        blocks.label("Messaging"),
+        blocks.command("sendMessage", "Send Message [PAYLOAD] To User [USER] On Port: [TARGET] From Port: [SOURCE]", {
+          PAYLOAD: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "Hello",
           },
-        },
-        {
-          opcode: "deleteAllPackets",
-          blockType: Scratch.BlockType.COMMAND,
-          text: "Delete All Packets",
-        },
-        "---",
-        {
-          blockType: Scratch.BlockType.LABEL,
-          text: "Raw Packet Queue",
-        },
-        {
-          opcode: "RAWgetAllPackets",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Get All RAW Packets",
-        },
-        {
-          opcode: "RAWgetFirstPacket",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "First RAW Packet",
-        },
-        {
-          opcode: "RAWdeleteFirstPacket",
-          blockType: Scratch.BlockType.COMMAND,
-          text: "Pop First RAW Packet",
-        },
-        {
-          opcode: "RAWdeleteAllPackets",
-          blockType: Scratch.BlockType.COMMAND,
-          text: "Delete All RAW Packets",
-        },
-        "---",
-        {
-          blockType: Scratch.BlockType.LABEL,
-          text: "Client Information",
-        },
-        {
-          opcode: "clientIP",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Client IP",
-        },
-        {
-          opcode: "clientUsername",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Client Username",
-        },
-        "---",
-        {
-          blockType: Scratch.BlockType.LABEL,
-          text: "Users",
-        },
-        {
-          opcode: "clientUsers",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Connected Users",
-        },
-        {
-          opcode: "usernameConnected",
-          blockType: Scratch.BlockType.BOOLEAN,
-          text: "Username [USER] Connected On Any Designation",
-          arguments: {
-            USER: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "user",
-            },
+          USER: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "targetUser",
           },
-        },
-        {
-          opcode: "userConnected",
-          blockType: Scratch.BlockType.BOOLEAN,
-          text: "User [USER] Connected On Designation: [DESIGNATION]",
-          arguments: {
-            USER: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "user",
-            },
-            DESIGNATION: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "rtr",
-            },
+          TARGET: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "port",
           },
-        },
-        {
-          opcode: "getUserDesignation",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Get All Users On Designation: [DESIGNATION]",
-          arguments: {
-            DESIGNATION: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "rtr",
-            },
+          SOURCE: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "port",
           },
-        },
-        {
-          opcode: "findID",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Find All Connections Of Username: [USER]",
-          arguments: {
-            USER: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "user",
-            },
+        }),
+        blocks.event("whenMessageReceived", "When Message Received"),
+        blocks.reporter("getPacketsFromTarget", "Get Packets From Port [TARGET]", {
+          TARGET: {
+            menu: "targets",
           },
-        },
-        {
-          opcode: "onJoin",
-          blockType: Scratch.BlockType.EVENT,
-          text: "When A User Connects",
-          isEdgeActivated: false,
-        },
-        {
-          opcode: "onLeave",
-          blockType: Scratch.BlockType.EVENT,
-          text: "When A User Disconnects",
-          isEdgeActivated: false,
-        },
-        {
-          opcode: "onJoinUser",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Last User To Join",
-        },
-        {
-          opcode: "onLeaveUser",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Last User To Leave",
-        },
-        "---",
-        {
-          blockType: Scratch.BlockType.LABEL,
-          text: "Synced Variables"
-        },
-        {
-          opcode: "setSyncedVariable",
-          blockType: Scratch.BlockType.COMMAND,
-          text: "Sync Variable With [USER] Of [KEY] To [VALUE]",
-          arguments: {
-            USER: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "user",
-            },
-            KEY: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "key",
-            },
-            VALUE: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "value",
-            },
+        }),
+        blocks.reporter("getFirstPacketOnTarget", "First Packet On Port [TARGET]", {
+          TARGET: {
+            menu: "targets",
           },
-        },
-        {
-          opcode: "getSyncedVariable",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Get Synced Variable With [USER] Of [KEY]",
-          arguments: {
-            USER: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "user",
-            },
-            KEY: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "key",
-            },
+        }),
+        blocks.reporter("dataOfFirstPacketOnTarget", "[DATA] Of First Packet On Port [TARGET]", {
+          DATA: {
+            menu: "packetData",
           },
-        },
-        {
-          opcode: "deleteSyncedVariable",
-          blockType: Scratch.BlockType.COMMAND,
-          text: "Delete Synced Variable With [USER] Of [KEY]",
-          arguments: {
-            USER: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "user",
-            },
-            KEY: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "key",
-            },
+          TARGET: {
+            menu: "targets",
           },
-        },
-        {
-          opcode: "getSyncedVariables",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Get Synced Variables With [USER]",
-          arguments: {
-            USER: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "user",
-            },
+        }),
+        blocks.reporter("numberOfPacketsOnTarget", "Number Of Packets On Port [TARGET]", {
+          TARGET: {
+            menu: "targets",
           },
-        },
-        "---",
-        {
-          blockType: Scratch.BlockType.LABEL,
-          text: "rMail",
-        },
-        {
-          blockType: Scratch.BlockType.BUTTON,
-          text: "Mail Docs",
-          func: "openMailDocs",
-        },
-        {
-          opcode: "whenMailReceived",
-          blockType: Scratch.BlockType.EVENT,
-          text: "When Mail Received",
-          isEdgeActivated: false,
-        },
-        {
-          opcode: "sendMail",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Send Mail With Subject: [SUBJECT] And Message: [MESSAGE] To: [TO]",
-          arguments: {
-            SUBJECT: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "Subject",
-            },
-            MESSAGE: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "Message",
-            },
-            TO: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "user",
-            },
+        }),
+        blocks.reporter("getAllTargets", "All Open Targets"),
+        blocks.reporter("getAllPackets", "All Packets"),
+        blocks.reporter("deleteFirstPacketOnTarget", "Pop First Of Port [TARGET]", {
+          TARGET: {
+            menu: "targets",
+          }
+        }),
+        blocks.command("deletePacketsOnTarget", "Delete All Packets On Port [TARGET]", {
+          TARGET: {
+            menu: "targets",
+          }
+        }),
+        blocks.command("deleteAllPackets", "Delete All Packets"),
+        blocks.separator(),
+        blocks.label("Raw Packet Queue"),
+        blocks.reporter("RAWgetAllPackets", "Get All RAW Packets"),
+        blocks.reporter("RAWgetFirstPacket", "First RAW Packet"),
+        blocks.command("RAWdeleteFirstPacket", "Pop First RAW Packet"),
+        blocks.command("RAWdeleteAllPackets", "Delete All RAW Packets"),
+        blocks.separator(),
+        blocks.label("Client Information"),
+        blocks.reporter("clientIP", "Client IP"),
+        blocks.reporter("clientUsername", "Client Username"),
+        blocks.separator(),
+        blocks.label("Users"),
+        blocks.reporter("clientUsers", "Connected Users"),
+        blocks.boolean("usernameConnected", "Username [USER] Connected On Any Designation", {
+          USER: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "user",
           },
-        },
-        {
-          opcode: "getAllMail",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Get Mail List",
-        },
-        {
-          opcode: "getMail",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Get Body Of Mail At Index [ID]",
-          arguments: {
-            ID: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "1",
-            },
+        }),
+        blocks.boolean("userConnected", "User [USER] Connected On Designation: [DESIGNATION]", {
+          USER: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "user",
           },
-        },
-        {
-          opcode: "deleteMail",
-          blockType: Scratch.BlockType.COMMAND,
-          text: "Delete Mail At Index [ID]",
-          arguments: {
-            ID: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "1",
-            },
+          DESIGNATION: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "rtr",
           },
-        },
-        {
-          opcode: "deleteAllMail",
-          blockType: Scratch.BlockType.COMMAND,
-          text: "Delete All Mail",
-        },
-        "---",
-        {
-          blockType: Scratch.BlockType.LABEL,
-          text: "Friends",
-        },
-        {
-          blockType: Scratch.BlockType.BUTTON,
-          text: "Friends Docs",
-          func: "openFriendsDocs",
-        },
-        {
-          opcode: "getFriendList",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Get Friend List",
-        },
-        {
-          opcode: "removeFriend",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Remove Friend [FRIEND]",
-          arguments: {
-            FRIEND: {
-              menu: "friends",
-            },
+        }),
+        blocks.reporter("getUserDesignation", "Get All Users On Designation: [DESIGNATION]", {
+          DESIGNATION: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "rtr",
           },
-        },
-        {
-          opcode: "acceptFriendRequest",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Accept Friend Request From [FRIEND]",
-          arguments: {
-            FRIEND: {
-              menu: "requests",
-            },
+        }),
+        blocks.reporter("findID", "Find All Connections Of Username: [USER]", {
+          USER: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "user",
           },
-        },
-        {
-          opcode: "declineFriendRequest",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Decline Friend Request From [FRIEND]",
-          arguments: {
-            FRIEND: {
-              menu: "requests",
-            },
+        }),
+        blocks.event("onJoin", "When A User Connects"),
+        blocks.event("onLeave", "When A User Disconnects"),
+        blocks.reporter("onJoinUser", "Last User To Join"),
+        blocks.reporter("onLeaveUser", "Last User To Leave"),
+        blocks.separator(),
+        blocks.label("Synced Variables"),
+        blocks.command("setSyncedVariable", "Sync Variable With [USER] Of [KEY] To [VALUE]", {
+          USER: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "user",
           },
-        },
-        {
-          opcode: "sendFriendRequest",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Send Friend Request To [FRIEND]",
-          arguments: {
-            FRIEND: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "friend",
-            },
+          KEY: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "key",
           },
-        },
-        {
-          opcode: "whenFriendRequestReceived",
-          blockType: Scratch.BlockType.EVENT,
-          text: "When Friend Request Received",
-          isEdgeActivated: false,
-        },
-        {
-          opcode: "whenFriendRequestAccepted",
-          blockType: Scratch.BlockType.EVENT,
-          text: "When Friend Request Accepted",
-          isEdgeActivated: false,
-        },
-        {
-          opcode: "getFriendRequests",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Get Friend Requests",
-        },
-        {
-          opcode: "getFriendStatus",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Get Friend Status Of [FRIEND]",
-          arguments: {
-            FRIEND: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "friend",
-            },
+          VALUE: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "value",
           },
-        },
-        {
-          opcode: "getFriendCount",
-          blockType: Scratch.BlockType.REPORTER,
-        },
-        "---",
-        {
-          blockType: Scratch.BlockType.LABEL,
-          text: "Currency",
-        },
-        {
-          blockType: Scratch.BlockType.BUTTON,
-          text: "Currency Docs",
-          func: "openCurrencyDocs",
-        },
-        {
-          opcode: "getBalance",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Get Balance",
-        },
-        {
-          opcode: "tranferCurrency",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Transfer [AMOUNT] To [USER]",
-          arguments: {
-            AMOUNT: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "0",
-            },
-            USER: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "user",
-            },
+        }),
+        blocks.reporter("getSyncedVariable", "Get Synced Variable With [USER] Of [KEY]", {
+          USER: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "user",
           },
-        },
-        {
-          opcode: "whenBalanceChanged",
-          blockType: Scratch.BlockType.EVENT,
-          text: "When Balance Changed",
-          isEdgeActivated: false,
-        },
-        {
-          opcode: "getTransactions",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Get Transactions",
-        },
-        "---",
-        {
-          blockType: Scratch.BlockType.LABEL,
-          text: "Owned Items",
-        },
-        {
-          opcode: "getMyOwnedItems",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Items Owned By Me",
-        },
-        {
-          opcode: "itemData",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Data Of Item (ID) [ITEM]",
-          arguments: {
-            ITEM: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "item",
-            },
+          KEY: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "key",
           },
-        },
-        {
-          opcode: "purchaseItem",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Purchase Item (ID) [ITEM]",
-          arguments: {
-            ITEM: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "item",
-            },
+        }),
+        blocks.command("deleteSyncedVariable", "Delete Synced Variable With [USER] Of [KEY]", {
+          USER: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "user",
           },
-        },
-        {
-          opcode: "itemInfo",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Info Of Item (ID) [ITEM]",
-          arguments: {
-            ITEM: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "item",
-            },
+          KEY: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "key",
           },
-        },
-        {
-          opcode: "ownsItem",
-          blockType: Scratch.BlockType.BOOLEAN,
-          text: "Do I Own Item (ID) [ITEM]",
-          arguments: {
-            ITEM: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "item",
-            },
+        }),
+        blocks.reporter("getSyncedVariables", "Get Synced Variables With [USER]", {
+          USER: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "user",
           },
-        },
-        {
-          opcode: "getPublicItems",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Public Items, Page: [PAGE]",
-          arguments: {
-            PAGE: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "1",
-            },
+        }),
+        blocks.separator(),
+        blocks.label("rMail"),
+        blocks.button("Mail Docs", "openMailDocs"),
+        blocks.event("whenMailReceived", "When Mail Received"),
+        blocks.reporter("sendMail", "Send Mail With Subject: [SUBJECT] And Message: [MESSAGE] To: [TO]", {
+          SUBJECT: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "Subject",
           },
-        },
-        {
-          opcode: "getPublicItemPages",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Public Item Pages",
+          MESSAGE: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "Message",
+          },
+          TO: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "user",
+          },
+        }),
+        blocks.reporter("getAllMail", "Get Mail List"),
+        blocks.reporter("getMail", "Get Body Of Mail At Index [ID]", {
+          ID: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "1",
+          },
+        }),
+        blocks.command("deleteMail", "Delete Mail At Index [ID]", {
+          ID: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "1",
+          },
+        }),
+        blocks.command("deleteAllMail", "Delete All Mail"),
+        blocks.separator(),
+        blocks.label("Friends"),
+        blocks.button("Friends Docs", "openFriendsDocs"),
+        blocks.reporter("getFriendList", "Get Friend List"),
+        blocks.reporter("removeFriend", "Remove Friend [FRIEND]", {
+          FRIEND: {
+            menu: "friends",
+          },
+        }),
+        blocks.reporter("acceptFriendRequest", "Accept Friend Request From [FRIEND]", {
+          FRIEND: {
+            menu: "requests",
+          },
+        }),
+        blocks.reporter("declineFriendRequest", "Decline Friend Request From [FRIEND]", {
+          FRIEND: {
+            menu: "requests",
+          },
+        }),
+        blocks.reporter("sendFriendRequest", "Send Friend Request To [FRIEND]", {
+          FRIEND: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "friend",
+          },
+        }),
+        blocks.event("whenFriendRequestReceived", "When Friend Request Received"),
+        blocks.event("whenFriendRequestAccepted", "When Friend Request Accepted"),
+        blocks.reporter("getFriendRequests", "Get Friend Requests"),
+        blocks.reporter("getFriendStatus", "Get Friend Status Of [FRIEND]", {
+          FRIEND: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "friend",
+          },
+        }),
+        blocks.reporter("getFriendCount", "Get Friend Count"),
+        blocks.separator(),
+        blocks.label("Currency"),
+        blocks.button("Currency Docs", "openCurrencyDocs"),
+        blocks.reporter("getBalance", "Get Balance"),
+        blocks.reporter("tranferCurrency", "Transfer [AMOUNT] To [USER]", {
+          AMOUNT: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "0",
+          },
+          USER: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "user",
+          },
+        }),
+        blocks.event("whenBalanceChanged", "When Balance Changed"),
+        blocks.reporter("getTransactions", "Get Transactions"),
+        blocks.separator(),
+        blocks.label("Owned Items"),
+        blocks.reporter("getMyOwnedItems", "Items Owned By Me"),
+        blocks.reporter("itemData", "Data Of Item (ID) [ITEM]", {
+          ITEM: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "item",
+          },
+        }),
+        blocks.reporter("purchaseItem", "Purchase Item (ID) [ITEM]", {
+          ITEM: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "item",
+          },
+        }),
+        blocks.reporter("itemInfo", "Info Of Item (ID) [ITEM]", {
+          ITEM: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "item",
+          },
+        }),
+        blocks.boolean("ownsItem", "Do I Own Item (ID) [ITEM]", {
+          ITEM: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "item",
+          },
+        }),
+        blocks.reporter("getPublicItems", "Public Items, Page: [PAGE]", {
+          PAGE: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "1",
+          },
+        }),
+        blocks.reporter("getPublicItemPages", "Public Item Pages", {}, {
           disableMonitor: true
-        },
-        "---",
-        {
-          blockType: Scratch.BlockType.LABEL,
-          text: "Created Items",
-        },
-        {
-          blockType: Scratch.BlockType.BUTTON,
-          text: "READ ME BEFORE MAKING ITEMS",
-          func: "openItemsDocs",
-        },
-        {
-          opcode: "getMyCreatedItems",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "ITEMS - By Me",
-        },
-        {
-          opcode: "createItem",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "ITEMS - Create With Name: [NAME] And Description: [DESCRIPTION] And Price: [PRICE] And Data: [CODE] And Transferable: [TRADABLE]",
-          arguments: {
-            NAME: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "item",
-            },
-            DESCRIPTION: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "description",
-            },
-            PRICE: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "0",
-            },
-            CODE: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "code",
-            },
-            TRADABLE: {
-              type: Scratch.ArgumentType.BOOLEAN,
-              defaultValue: true,
-            },
+        }),
+        blocks.separator(),
+        blocks.label("Created Items"),
+        blocks.button("READ ME BEFORE MAKING ITEMS", "openItemsDocs"),
+        blocks.reporter("getMyCreatedItems", "ITEMS - By Me"),
+        blocks.reporter("createItem", "ITEMS - Create With Name: [NAME] And Description: [DESCRIPTION] And Price: [PRICE] And Data: [CODE] And Transferable: [TRADABLE]", {
+          NAME: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "item",
           },
-        },
-        {
-          opcode: "updateItem",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "ITEMS - Update [KEY] To [DATA] for id: [ITEM]",
-          arguments: {
-            ITEM: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "ID",
-            },
-            KEY: {
-              type: Scratch.ArgumentType.STRING,
-              menu: "itemKeys",
-            },
-            DATA: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "data",
-            },
+          DESCRIPTION: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "description",
           },
-        },
-        {
-          opcode: "deleteItem",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "ITEMS - Delete (ID) [ITEM]",
-          arguments: {
-            ITEM: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "item",
-            },
+          PRICE: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "0",
           },
-        },
-        {
-          opcode: "hideItem",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "ITEMS - Disable Purchases On (ID) [ITEM]",
-          arguments: {
-            ITEM: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "item",
-            },
+          CODE: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "code",
           },
-        },
-        {
-          opcode: "showItem",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "ITEMS - Enable Purchases on (ID) [ITEM]",
-          arguments: {
-            ITEM: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "item",
-            },
+          TRADABLE: {
+            type: Scratch.ArgumentType.BOOLEAN,
+            defaultValue: true,
           },
-        },
-        "---",
-        {
-          blockType: Scratch.BlockType.LABEL,
-          text: "Badges",
-        },
-        {
-          blockType: Scratch.BlockType.BUTTON,
-          text: "Badge Docs",
-          func: "openBadgesDocs",
-        },
-        {
-          opcode: "gotBadgesSuccessfully",
-          blockType: Scratch.BlockType.BOOLEAN,
-          text: "Badges Loaded Successfully",
-        },
-        {
-          opcode: "userBadges",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "User Badges",
-        },
-        {
-          opcode: "userBadgeCount",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "User Badge Count",
-        },
-        {
-          opcode: "hasBadge",
-          blockType: Scratch.BlockType.BOOLEAN,
-          text: "User Has Badge [BADGE]",
-          arguments: {
-            BADGE: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "badge",
-            },
+        }),
+        blocks.reporter("updateItem", "ITEMS - Update [KEY] To [DATA] for id: [ITEM]", {
+          ITEM: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "ID",
           },
-        },
-        {
-          opcode: "badgeInfo",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Badge Info [BADGE]",
-          arguments: {
-            BADGE: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "badge",
-            },
+          KEY: {
+            type: Scratch.ArgumentType.STRING,
+            menu: "itemKeys",
           },
-        },
-        {
-          opcode: "allBadges",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "All Badges",
-        },
-        {
-          opcode: "redownloadBadges",
-          blockType: Scratch.BlockType.COMMAND,
-          text: "Redownload Badges",
-        },
-        "---",
-        {
-          blockType: Scratch.BlockType.LABEL,
-          text: "Voice Calling",
-        },
-        {
-          opcode: "callUser",
-          blockType: Scratch.BlockType.COMMAND,
-          text: "Call User [USERNAME]",
-          arguments: {
-            USERNAME: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "des-user§instance",
-            },
+          DATA: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "data",
           },
-        },
-        {
-          opcode: "answerCall",
-          blockType: Scratch.BlockType.COMMAND,
-          text: "Answer Call From [USERNAME]",
-          arguments: {
-            USERNAME: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "des-user§instance",
-            },
+        }),
+        blocks.reporter("deleteItem", "ITEMS - Delete (ID) [ITEM]", {
+          ITEM: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "item",
           },
-        },
-        {
-          opcode: "declineCall",
-          blockType: Scratch.BlockType.COMMAND,
-          text: "Decline Call From [USERNAME]",
-          arguments: {
-            USERNAME: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: "des-user§instance",
-            },
+        }),
+        blocks.reporter("hideItem", "ITEMS - Disable Purchases On (ID) [ITEM]", {
+          ITEM: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "item",
           },
-        },
-        {
-          opcode: "endCall",
-          blockType: Scratch.BlockType.COMMAND,
-          text: "End Call",
-        },
-        {
-          opcode: "allIncomingCalls",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "All Incoming Calls",
-        },
-        {
-          opcode: "callStatus",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Call Status", // 0 = no call, 1 = incoming call, 2 = outgoing call, 3 = call in progress, 4 = call disconnected
-        },
-        {
-          opcode: "callConnected",
-          blockType: Scratch.BlockType.BOOLEAN,
-          text: "Call Connected",
-        },
-        {
-          opcode: "callInfo",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Call Info [INFO]",
-          arguments: {
-            INFO: {
-              menu: "callInfo",
-            },
+        }),
+        blocks.reporter("showItem", "ITEMS - Enable Purchases on (ID) [ITEM]", {
+          ITEM: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "item",
           },
-        },
-        {
-          opcode: "whenCallReceived",
-          blockType: Scratch.BlockType.EVENT,
-          text: "When Call Received",
-          isEdgeActivated: false,
-        },
-        {
-          opcode: "whenCallEnded",
-          blockType: Scratch.BlockType.EVENT,
-          text: "When Call Ended",
-          isEdgeActivated: false,
-        },
-        {
-          opcode: "whenCallAnswered",
-          blockType: Scratch.BlockType.EVENT,
-          text: "When Call Answered",
-          isEdgeActivated: false,
-        },
-        {
-          opcode: "whenCallDeclined",
-          blockType: Scratch.BlockType.EVENT,
-          text: "When Call Declined",
-          isEdgeActivated: false,
-        },
-        {
-          opcode: "whenCallDisconnected",
-          blockType: Scratch.BlockType.EVENT,
-          text: "When Call Failed",
-          isEdgeActivated: false,
-        },
-        "---",
-        {
-          blockType: Scratch.BlockType.LABEL,
-          text: "DANGER ZONE",
-        },
-        {
-          blockType: Scratch.BlockType.BUTTON,
-          text: "Show Danger Zone",
-          func: "openDangerZone",
-          hideFromPalette: this.showDangerous,
-        },
-        {
-          blockType: Scratch.BlockType.BUTTON,
-          text: "Hide Danger Zone",
-          func: "closeDangerZone",
-          hideFromPalette: !this.showDangerous,
-        },
-        {
-          opcode: "deleteAccount",
-          blockType: Scratch.BlockType.REPORTER,
-          text: "Delete Account",
+        }),
+        blocks.separator(),
+        blocks.label("Badges"),
+        blocks.button("Badge Docs", "openBadgesDocs"),
+        blocks.boolean("gotBadgesSuccessfully", "Badges Loaded Successfully"),
+        blocks.reporter("userBadges", "User Badges"),
+        blocks.reporter("userBadgeCount", "User Badge Count"),
+        blocks.boolean("hasBadge", "User Has Badge [BADGE]", {
+          BADGE: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "badge",
+          },
+        }),
+        blocks.reporter("badgeInfo", "Badge Info [BADGE]", {
+          BADGE: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "badge",
+          },
+        }),
+        blocks.reporter("allBadges", "All Badges"),
+        blocks.command("redownloadBadges", "Redownload Badges"),
+        blocks.separator(),
+        blocks.label("Voice Calling"),
+        blocks.command("callUser", "Call User [USERNAME]", {
+          USERNAME: {
+            type: Scratch.ArgumentType.STRING,
+            defaultValue: "des-user§instance",
+          },
+        }),
+        blocks.button("Get roturVoice", "openRoturVoice"),
+        blocks.event("whenCallReceived", "When Call Received"),
+        blocks.reporter("callData", "Call Data"),
+        blocks.separator(),
+        blocks.label("DANGER ZONE"),
+        blocks.button("Show Danger Zone", "openDangerZone", {
+          hideFromPalette: this.showDangerous
+        }),
+        blocks.button("Hide Danger Zone", "closeDangerZone", {
+          hideFromPalette: !this.showDangerous
+        }),
+        blocks.reporter("deleteAccount", "Delete Account", {}, {
           hideFromPalette: !this.showDangerous,
           disableMonitor: true
-        },
+        }),
       ],
       menus: {
         packetData: {
@@ -1526,6 +749,10 @@ class RoturExtension {
     window.open("https://github.com/RoturTW/main/wiki/Badges")
   }
 
+  openRoturVoice() {
+    window.open("https://extensions.mistium.com/featured/roturVoice.js")
+  }
+
   openDangerZone() {
     this.showDangerous = true;
     Scratch.vm.extensionManager.refreshBlocks();
@@ -1537,6 +764,26 @@ class RoturExtension {
   }
 
   // main functions
+
+  handlePromise(message, funcmain) {
+    const cmd = message?.val?.command;
+    return new Promise((resolve, reject) => {
+      this.ws.send(
+        JSON.stringify(message),
+      );
+
+      const func = (event) => {
+        const packet = JSON.parse(event.data);
+        if (packet?.origin?.username === this.accounts) {
+          if (cmd && packet?.val?.source_command === cmd) {
+            funcmain(packet, resolve, reject);
+            this.ws.removeEventListener("message", func);
+          }
+        }
+      }
+      this.ws.addEventListener("message", func);
+    });
+  }
 
   connectToServer(args) {
     if (!this.server || !this.accounts) {
@@ -1561,11 +808,8 @@ class RoturExtension {
     for (let key in this.packets) {
       ports.push(key);
     }
-    if (ports.length === 0) {
-      return ["No Open Ports"];
-    } else {
-      return ports;
-    }
+    if (ports.length === 0) return ["No Open Ports"];
+    else return ports;
   }
 
   accountKeys() {
@@ -1573,49 +817,32 @@ class RoturExtension {
     for (let key of Object.keys(this.user)) {
       keys.push(key);
     }
-    if (keys.length === 0) {
-      return ["No User Keys"];
-    } else {
-      return keys;
-    }
+    if (keys.length === 0) return ["No User Keys"];
+    else return keys;
   }
 
   myFriends() {
-    if (this.authenticated && this.is_connected) {
-      let keys = [];
-      for (let key of this.user["sys.friends"]) {
-        keys.push(key);
-      }
-      if (keys.length === 0) {
-        return ["No Friends"];
-      } else {
-        return keys;
-      }
-    } else {
-      return ["Not Authenticated"];
+    if (!(this.authenticated && this.is_connected)) return ["Not Authenticated"];
+    let keys = [];
+    for (let key of this.user["sys.friends"]) {
+      keys.push(key);
     }
+    if (keys.length === 0) return ["No Friends"];
+    else return keys;
   }
 
   myRequests() {
-    if (this.authenticated && this.is_connected) {
-      let keys = [];
-      for (let key of this.user["sys.requests"]) {
-        keys.push(key);
-      }
-      if (keys.length === 0) {
-        return ["No Requests"];
-      } else {
-        return keys;
-      }
-    } else {
-      return ["Not Authenticated"];
+    if (!(this.authenticated && this.is_connected)) return ["Not Authenticated"];
+    let keys = [];
+    for (let key of this.user["sys.requests"]) {
+      keys.push(key);
     }
+    if (keys.length === 0) return ["No Requests"];
+    else return keys;
   }
 
   serverOnline() {
-    if (!this.is_connected) {
-      return false;
-    }
+    if (!this.is_connected) return false;
     return this.client.users.indexOf(this.accounts) !== -1;
   }
 
@@ -1665,32 +892,72 @@ class RoturExtension {
             delete packet.val.source_command;
           }
           if (packet.origin === this.accounts) {
-            if (packet.source_command === "omail_received") {
-              Scratch.vm.runtime.startHats("roturEXT_whenMailReceived");
-            } else if (packet.source_command === "account_update") {
-              Scratch.vm.runtime.startHats("roturEXT_whenAccountUpdate");
-              if (packet.payload.key === "sys.requests") {
-                if (packet.payload.value.length > this.friends.requests.length) {
-                  Scratch.vm.runtime.startHats("roturEXT_whenFriendRequestReceived");
-                } else {
-                  Scratch.vm.runtime.startHats("roturEXT_whenFriendRequestAccepted");
+            switch (packet.val.source_command) {
+              case "call":
+                this.callData = packet.val;
+                Scratch.vm.runtime.startHats("roturEXT_whenCallReceived");
+                break;
+              case "omail_received":
+                Scratch.vm.runtime.startHats("roturEXT_whenMailReceived");
+                break;
+              case "account_update":
+                Scratch.vm.runtime.startHats("roturEXT_whenAccountUpdate");
+                if (packet.payload.key === "sys.requests") {
+                  if (packet.payload.value.length > this.friends.requests.length) {
+                    Scratch.vm.runtime.startHats("roturEXT_whenFriendRequestReceived");
+                  } else {
+                    Scratch.vm.runtime.startHats("roturEXT_whenFriendRequestAccepted");
+                  }
                 }
-              }
-              if (packet.payload.key === "sys.currency") {
-                Scratch.vm.runtime.startHats("roturEXT_whenBalanceChanged");
-              }
-              this.user[packet.payload.key] = packet.payload.value;
+                if (packet.payload.key === "sys.currency") {
+                  Scratch.vm.runtime.startHats("roturEXT_whenBalanceChanged");
+                }
+                this.user[packet.payload.key] = packet.payload.value;
+                break;
+              case "sync_set":
+                this.syncedVariables[packet.origin] ||= {};
+                this.syncedVariables[packet.origin][packet.payload.key] = packet.payload.value;
+                break;
+              case "sync_delete":
+                delete this.syncedVariables[packet.origin][packet.payload.key];
+                break;
+              case "sync_get":
+                if (this.syncedVariables[packet.origin]) {
+                  if (this.syncedVariables[packet.origin][packet.payload.key]) {
+                    packet.val = this.syncedVariables[packet.origin][packet.payload.key];
+                  } else {
+                    packet.val = null;
+                  }
+                }
+                break;
+              case "omail_received":
+                Scratch.vm.runtime.startHats("roturEXT_whenMailReceived");
+                break;
+              case "account_update":
+                Scratch.vm.runtime.startHats("roturEXT_whenAccountUpdate");
+                if (packet.payload.key === "sys.requests") {
+                  if (packet.payload.value.length > this.friends.requests.length) {
+                    Scratch.vm.runtime.startHats("roturEXT_whenFriendRequestReceived");
+                  } else {
+                    Scratch.vm.runtime.startHats("roturEXT_whenFriendRequestAccepted");
+                  }
+                }
+                if (packet.payload.key === "sys.currency") {
+                  Scratch.vm.runtime.startHats("roturEXT_whenBalanceChanged");
+                }
             }
-          } else {
-            if (packet.source_command === "sync_set") {
-              if (!this.syncedVariables[packet.origin]) {
-                this.syncedVariables[packet.origin] = {};
-              }
-              this.syncedVariables[packet.origin][packet.payload.key] = packet.payload.value;
-            }
-            if (packet.source_command === "sync_delete") {
-              delete this.syncedVariables[packet.origin][packet.payload.key];
-            }
+            this.user[packet.payload.key] = packet.payload.value;
+          }
+        } else {
+          if (packet.source_command === "sync_set") {
+            this.syncedVariables[packet.origin] ||= {};
+            this.syncedVariables[packet.origin][packet.payload.key] = packet.payload.value;
+          }
+          if (packet.source_command === "sync_delete") {
+            delete this.syncedVariables[packet.origin][packet.payload.key];
+          }
+          
+          if (packet.val && packet.val.target) {
             if (!this.packets[packet.val.target]) {
               this.packets[packet.val.target] = [];
             }
@@ -1699,6 +966,7 @@ class RoturExtension {
             delete packet.val;
           }
         }
+        
         if (packet.listener === "handshake_cfg") {
           let username = this.designation + "-" + this.username;
           let msg = {
@@ -1726,8 +994,9 @@ class RoturExtension {
           Scratch.vm.runtime.startHats("roturEXT_whenConnected");
           console.log("Connected!")
         }
-      };
+      }
     };
+
     this.ws.onclose = () => {
       console.log("Disconnected!");
       Scratch.vm.runtime.startHats("roturEXT_whenDisconnected");
@@ -1771,230 +1040,113 @@ class RoturExtension {
   }
 
   login(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (this.authenticated) {
-      return "Already Logged In";
-    }
-    return new Promise((resolve, reject) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            ip: this.client.ip,
-            client: this.my_client,
-            command: "login",
-            id: this.userToken,
-            payload: [args.USERNAME, MD5("" + args.PASSWORD)],
-          },
-          id: this.accounts,
-        }),
-      );
-
-      const handleLoginResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin?.username === this.accounts) {
-          if (packet.val?.source_command === "login") {
-            if (typeof packet.val?.payload === "object") {
-              this.ws.close();
-              this.userToken = packet.val.token;
-              this.user = packet.val.payload;
-              this.first_login = packet.val.first_login;
-
-              delete packet.val
-              delete this.user.key
-              delete this.user.password
-              
-              // friends data
-              this.friends = {};
-              // handle if the user has no friends :P
-              if (!this.user["sys.friends"]) this.user["sys.friends"] = [];
-              if (!this.user["sys.requests"]) this.user["sys.requests"] = [];
-
-              this.friends.list = this.user["sys.friends"];
-              this.friends.requests = this.user["sys.requests"];
-              delete this.user.friends;
-              delete this.user.requests;
-
-              // setup username for reconnect
-              this.username = args.USERNAME + "§" + randomString(10);
-              this.connectToWebsocket();
-              while (!this.is_connected) { }
-              this.authenticated = true;
-              Scratch.vm.runtime.startHats("roturEXT_whenAuthenticated");
-              resolve(`Logged in as ${args.USERNAME}`);
-            } else {
-              this.authenticated = false;
-              reject(`Failed to login as ${args.USERNAME}`);
-            }
-            this.ws.removeEventListener("message", handleLoginResponse);
-          }
-        }
-      };
-
-      this.ws.addEventListener("message", handleLoginResponse);
-    });
+    args.PASSWORD = MD5("" + args.PASSWORD);
+    return this._login(args);
   }
 
-  loginMD5(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (this.authenticated) {
-      return "Already Logged In";
-    }
-    return new Promise((resolve, reject) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            ip: this.client.ip,
-            client: this.my_client,
-            command: "login",
-            id: this.userToken,
-            payload: [args.USERNAME, "" + args.PASSWORD],
-          },
-          id: this.accounts,
-        }),
-      );
-
-      const handleLoginResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin?.username === this.accounts) {
-          if (packet.val?.source_command === "login") {
-            if (typeof packet.val?.payload === "object") {
-              this.ws.close();
-              this.userToken = packet.val.token;
-              this.user = packet.val.payload;
-              this.first_login = packet.val.first_login;
-
-              delete packet.val
-              delete this.user.key
-              delete this.user.password
-              
-              // friends data
-              this.friends = {};
-              // handle if the user has no friends :P
-              if (!this.user["sys.friends"]) this.user["sys.friends"] = [];
-              if (!this.user["sys.requests"]) this.user["sys.requests"] = [];
-
-              this.friends.list = this.user["sys.friends"];
-              this.friends.requests = this.user["sys.requests"];
-              delete this.user.friends;
-              delete this.user.requests;
-
-              // setup username for reconnect
-              this.username = args.USERNAME + "§" + randomString(10);
-              this.connectToWebsocket();
-              while (!this.is_connected) { }
-              this.authenticated = true;
-              Scratch.vm.runtime.startHats("roturEXT_whenAuthenticated");
-              resolve(`Logged in as ${args.USERNAME}`);
-            } else {
-              this.authenticated = false;
-              reject(`Failed to login as ${args.USERNAME}`);
-            }
-            this.ws.removeEventListener("message", handleLoginResponse);
-          }
-        }
-      };
-
-      this.ws.addEventListener("message", handleLoginResponse);
-    });
+  loginMd5(args) {
+    return this._login(args);
   }
 
-  passwordMD5(args) {
-    return MD5("" + args.PASSWORD);
+  _login(args) {
+    if (!this.is_connected) return "Not Connected";
+    if (this.authenticated) return "Already Logged In";
+    return this.handlePromise({
+      cmd: "pmsg",
+      val: {
+        ip: this.client.ip,
+        client: this.my_client,
+        command: "login",
+        id: this.userToken,
+        payload: [args.USERNAME, args.PASSWORD],
+      },
+      id: this.accounts,
+    }, (packet, resolve, reject) => {
+      if (typeof packet.val?.payload === "object") {
+        this.ws.close();
+        this.userToken = packet.val.token;
+        this.user = packet.val.payload;
+        this.first_login = packet.val.first_login;
+
+        delete packet.val
+        delete this.user.key
+        delete this.user.password
+
+        // friends data  
+        this.friends = {};
+        // handle if the user has no friends :P
+        if (!this.user["sys.friends"]) this.user["sys.friends"] = [];
+        if (!this.user["sys.requests"]) this.user["sys.requests"] = [];
+
+        this.friends.list = this.user["sys.friends"];
+        this.friends.requests = this.user["sys.requests"];
+        delete this.user.friends;
+        delete this.user.requests;
+
+        // setup username for reconnect
+        this.username = args.USERNAME + "§" + randomString(10);
+        this.connectToWebsocket();
+        while (!this.is_connected) { }
+        this.authenticated = true;
+        Scratch.vm.runtime.startHats("roturEXT_whenAuthenticated");
+        resolve(`Logged in as ${args.USERNAME}`);
+      } else {
+        this.authenticated = false;
+        reject(`Failed to login as ${args.USERNAME}`);
+      }
+    });
   }
 
   register(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (this.authenticated) {
-      return "Already Logged In";
-    }
-    return new Promise((resolve, reject) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            client: this.my_client,
-            command: "new_account",
-            id: this.userToken,
-            ip: this.client.ip,
-            payload: {
-              username: args.USERNAME,
-              password: MD5("" + args.PASSWORD),
-            },
-          },
-          id: this.accounts,
-        }),
-      );
-
-      const handleRegisterResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin.username === this.accounts) {
-          if (packet.val?.source_command === "new_account") {
-            if (packet.val?.payload === "Account Created Successfully") {
-              resolve(`Registered as ${args.USERNAME}`);
-            } else {
-              reject(
-                `Failed to register as ${args.USERNAME}: ${packet.val.payload}`,
-              );
-            }
-            this.ws.removeEventListener("message", handleRegisterResponse);
-          }
+    if (!this.is_connected) return "Not Connected";
+    if (this.authenticated) return "Already Logged In";
+    return this.handlePromise({
+      cmd: "pmsg",
+      val: {
+        client: this.my_client,
+        command: "new_account",
+        id: this.userToken,
+        ip: this.client.ip,
+        payload: {
+          username: args.USERNAME,
+          password: MD5("" + args.PASSWORD),
         }
-      };
-
-      this.ws.addEventListener("message", handleRegisterResponse);
+      },
+      id: this.accounts,
+    }, (packet, resolve, reject) => {
+      if (packet.val?.payload === "Account Created Successfully") {
+        resolve(`Registered as ${args.USERNAME}`);
+      } else {
+        reject(`Failed to register as ${args.USERNAME}: ${packet.val.payload}`);
+      }
     });
   }
 
   deleteAccount() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    if (!confirm(`Are You Sure You Want To Delete ${this.client.username}? Everything will be lost!`)) {
-      return "Cancelled";
-    }
-    return new Promise((resolve, reject) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            client: this.my_client,
-            command: "delete_account",
-            id: this.userToken,
-          },
-          id: this.accounts,
-        }),
-      );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
+    if (!confirm(`Are You Sure You Want To Delete ${this.client.username}? Everything will be lost!`)) return "Cancelled";
 
-      const handleDeleteAccountResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin.username === this.accounts) {
-          if (packet.val?.source_command === "delete") {
-            if (packet.val.payload === "Account Deleted Successfully") {
-              this.userToken = "";
-              this.user = {};
-              this.authenticated = false;
-              this.ws.close();
-              resolve("Account Deleted Successfully");
-            } else {
-              reject("Failed to delete account: " + packet.val.payload);
-            }
-            this.ws.removeEventListener("message", handleDeleteAccountResponse);
-          }
+    return this.handlePromise({
+      cmd: "pmsg",
+      val: {
+        client: this.my_client,
+        command: "delete_account",
+        id: this.userToken,
+      },
+      id: this.accounts,
+    }, (packet, resolve, reject) => {
+      if (packet.val?.source_command === "delete") {
+        if (packet.val.payload === "Account Deleted Successfully") {
+          this.userToken = "";
+          this.user = {};
+          this.authenticated = false;
+          this.ws.close();
+          resolve("Account Deleted Successfully");
+        } else {
+          reject("Failed to delete account: " + packet.val.payload);
         }
-      };
-
-      this.ws.addEventListener("message", handleDeleteAccountResponse);
+      }
     });
   }
 
@@ -2026,8 +1178,7 @@ class RoturExtension {
   getkey(args) {
     if (!this.is_connected) {
       return "Not Connected";
-    }
-    if (!this.authenticated) {
+    } else if (!this.authenticated) {
       return "Not Logged In";
     }
     if (args.KEY in this.user) {
@@ -2043,137 +1194,82 @@ class RoturExtension {
   }
 
   setkey(args) {
-    if (args.VALUE.length > 1000) {
-      // this is server side, removing this does nothing other than make the server reject the request
-      return "Key Too Long, Limit is 1000 Characters";
-    }
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    return new Promise((resolve) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "update",
-            client: this.my_client,
-            id: this.userToken,
-            payload: [args.KEY, args.VALUE],
-          },
-          id: this.accounts,
-        }),
-      );
+    // this is server side, removing this does nothing other than make the server reject the request
+    if (args.VALUE.length > 1000) return "Key Too Long, Limit is 1000 Characters";
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
 
-      const handleUpdateKeyResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin.username === this.accounts) {
-          if (packet.val?.source_command === "update") {
-            if (packet.val.payload === "Account Updated Successfully") {
-              this.user[args.KEY] = args.VALUE;
-            }
-            resolve(packet.val.payload);
-            this.ws.removeEventListener("message", handleUpdateKeyResponse);
-          }
+    return this.handlePromise({
+      cmd: "pmsg",
+      val: {
+        command: "update",
+        client: this.my_client,
+        id: this.userToken,
+        payload: [args.KEY, args.VALUE],
+      },
+      id: this.accounts,
+    },
+      (packet, resolve) => {
+        if (packet.val.payload === "Account Updated Successfully") {
+          this.user[args.KEY] = args.VALUE;
         }
-      };
-
-      this.ws.addEventListener("message", handleUpdateKeyResponse);
-    });
+        resolve(packet.val.payload);
+      });
   }
 
   keyExists(args) {
-    if (!this.is_connected) {
-      return false;
-    }
-    if (!this.authenticated) {
-      return false;
-    }
+    if (!this.is_connected) return false;
+    if (!this.authenticated) return false;
     return args.KEY in this.user;
   }
 
   getkeys() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
     return JSON.stringify(Object.keys(this.user));
   }
 
   getvalues() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
     return JSON.stringify(Object.values(this.user));
   }
 
   getAccount() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
     return JSON.stringify(this.user);
   }
 
   setStorageID(args) {
-    if (this.authenticated && this.is_connected) {
-      if (!this.storage_id) {
-        if (
-          window.confirm(
-            "This project would like to use the storage id: " +
-            args.ID +
-            ". Do you want to continue?",
-          )
-        ) {
-          new Promise((resolve, reject) => {
-            this.ws.send(
-              JSON.stringify({
-                cmd: "pmsg",
-                val: {
-                  command: "storage_getid",
-                  client: this.my_client,
-                  id: this.userToken,
-                  payload: args.ID,
-                },
-                id: this.accounts,
-              }),
-            );
-
-            const handleStorageIdSet = (event) => {
-              let packet = JSON.parse(event.data);
-              if (packet?.origin?.username === this.accounts) {
-                if (packet.val.source_command === "storage_getid") {
-                  if (packet.val.payload !== "Not Logged In") {
-                    resolve("" + args.ID);
-                    this.storage_id = "" + args.ID;
-                    this.localKeys = JSON.parse(packet.val.payload);
-                  } else {
-                    console.error(
-                      "Failed to set storage id: " + packet.val.payload,
-                    );
-                    reject(packet.val.payload);
-                  }
-                  this.ws.removeEventListener("message", handleStorageIdSet);
-                }
-              }
-            };
-            this.ws.addEventListener("message", handleStorageIdSet);
-          });
-        }
-      } else {
-        console.error("Unable to set the storage ID: Already Set");
-      }
-    } else {
+    if (!(this.authenticated && this.is_connected)) {
       console.error("Unable to set the storage ID: Not Logged In");
+      return;
+    }
+    if (this.storage_id) {
+      console.error("Unable to set the storage ID: Already Set");
+      return;
+    }
+    if (window.confirm("This project would like to use the storage id: " + args.ID + ". Do you want to continue?")) {
+      this.handlePromise({
+        cmd: "pmsg",
+        val: {
+          command: "storage_getid",
+          client: this.my_client,
+          id: this.userToken,
+          payload: args.ID,
+        },
+        id: this.accounts,
+      }, (packet, resolve, reject) => {
+        if (packet.val.payload !== "Not Logged In") {
+          resolve("" + args.ID);
+          this.storage_id = "" + args.ID;
+          this.localKeys = JSON.parse(packet.val.payload);
+        } else {
+          console.error("Failed to set storage id: " + packet.val.payload);
+          reject(packet.val.payload);
+        }
+      });
     }
   }
 
@@ -2186,168 +1282,121 @@ class RoturExtension {
   }
 
   getStorageKey(args) {
-    if (this.authenticated && this.is_connected) {
-      if (this.storage_id) {
-        return this.localKeys[args.KEY] ?? "";
-      } else {
-        return "Storage Id Not Set";
-      }
-    } else {
+    if (!(this.authenticated && this.is_connected)) {
       return "Not Logged In";
+    } else if (!this.storage_id) {
+      return "Storage Id Not Set";
+    } else {
+      return this.localKeys[args.KEY] ?? "";
     }
   }
 
   setStorageKey(args) {
-    if (args.VALUE.length > 1000) {
-      // this is server side too, removing this does nothing other than make the server reject the request
-      return "Key Too Long, Limit is 1000 Characters";
-    }
-    if (this.authenticated && this.is_connected) {
-      if (this.storage_id) {
-        this.localKeys[args.KEY] = args.VALUE;
-        return new Promise((resolve, reject) => {
-          this.ws.send(
-            JSON.stringify({
-              cmd: "pmsg",
-              val: {
-                command: "storage_set",
-                id: this.userToken,
-                client: this.my_client,
-                payload: {
-                  key: args.KEY,
-                  value: args.VALUE,
-                  id: this.storage_id,
-                },
-              },
-              id: this.accounts,
-            }),
-          );
+    // this is server side, removing this does nothing other than make the server reject the request
+    if (args.VALUE.length > 1000) return "Key Too Long, Limit is 1000 Characters";
 
-          const handleStorageKey = (event) => {
-            let packet = JSON.parse(event.data);
-            if (packet?.origin.username === this.accounts) {
-              if (packet.val.source_command === "storage_set") {
-                if (packet.val.payload === "Successfully Set Key") {
-                  resolve("Key Set");
-                } else {
-                  reject(packet.val.payload);
-                }
-                this.ws.removeEventListener("message", handleStorageKey);
-              }
-            }
-          };
-          this.ws.addEventListener("message", handleStorageKey);
-        });
+    if (!(this.authenticated && this.is_connected)) return "Not Logged In";
+    if (!this.storage_id) return "Storage Id Not Set";
+
+    this.localKeys[args.KEY] = args.VALUE;
+    return this.handlePromise({
+      cmd: "pmsg",
+      val: {
+        command: "storage_set",
+        id: this.userToken,
+        client: this.my_client,
+        payload: {
+          key: args.KEY,
+          value: args.VALUE,
+          id: this.storage_id,
+        }
+      },
+      id: this.accounts
+    }, (packet, resolve, reject) => {
+      if (packet.val.payload === "Successfully Set Key") {
+        resolve("Key Set");
       } else {
-        return "Storage Id Not Set";
+        reject(packet.val.payload);
       }
-    } else {
-      return "Not Logged In";
-    }
+    });
   }
 
   existsStorageKey(args) {
-    if (this.authenticated && this.is_connected) {
-      if (this.storage_id) {
-        return args.KEY in this.localKeys;
-      } else {
-        return false;
-      }
-    } else {
-      return false;
-    }
+    if (!(this.authenticated && this.is_connected) || !this.storage_id) return false;
+    return args.KEY in this.localKeys;
   }
 
   deleteStorageKey(args) {
-    if (this.authenticated && this.is_connected) {
-      if (this.storage_id) {
-        delete this.localKeys[args.KEY];
-        return new Promise((resolve, reject) => {
-          this.ws.send(
-            JSON.stringify({
-              cmd: "pmsg",
-              val: {
-                command: "storage_delete",
-                id: this.userToken,
-                client: this.my_client,
-                payload: {
-                  key: args.KEY,
-                  id: this.storage_id,
-                },
-              },
-              id: this.accounts,
-            }),
-          );
+    if (!(this.authenticated && this.is_connected)) return "Not Logged In";
+    if (!this.storage_id) return "Storage Id Not Set";
 
-          const handleStorageKey = (event) => {
-            let packet = JSON.parse(event.data);
-            if (packet?.origin?.username === this.accounts) {
-              if (packet.val.source_command === "storage_delete") {
-                if (packet.val.payload === "Successfully Deleted Key") {
-                  resolve("Key Deleted");
-                } else {
-                  reject(packet.val.payload);
-                }
-                this.ws.removeEventListener("message", handleStorageKey);
-              }
-            }
-          };
-          this.ws.addEventListener("message", handleStorageKey);
-        });
+    delete this.localKeys[args.KEY];
+
+    return this.handlePromise({
+      cmd: "pmsg",
+      val: {
+        command: "storage_delete",
+        id: this.userToken,
+        client: this.my_client,
+        payload: {
+          key: args.KEY,
+          id: this.storage_id,
+        },
+      },
+      id: this.accounts,
+    }, (packet, resolve, reject) => {
+      if (packet.val.payload === "Successfully Deleted Key") {
+        resolve("Key Deleted");
       } else {
-        console.error("Storage Id Not Set");
+        reject(packet.val.payload);
       }
-    } else {
-      console.error("Not Logged In");
-    }
+    });
   }
 
   getStorageKeys() {
-    if (this.authenticated && this.is_connected) {
-      if (this.storage_id) {
-        return JSON.stringify(Object.keys(this.localKeys));
-      } else {
-        return "Storage Id Not Set";
-      }
-    } else {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
+    if (!this.storage_id) return "Storage Id Not Set";
+    return JSON.stringify(Object.keys(this.localKeys));
   }
 
   getStorageValues() {
-    if (this.authenticated && this.is_connected) {
-      if (this.storage_id) {
-        return JSON.stringify(Object.values(this.localKeys));
-      } else {
-        return "Storage Id Not Set";
-      }
-    } else {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
+    if (!this.storage_id) return "Storage Id Not Set";
+    return JSON.stringify(Object.values(this.localKeys));
   }
 
   clearStorage() {
-    if (this.authenticated && this.is_connected) {
-      if (this.storage_id) {
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
+    if (!this.storage_id) return "Storage Id Not Set";
+
+    return this.handlePromise({
+      cmd: "pmsg",
+      val: {
+        command: "storage_clear",
+        id: this.userToken,
+        client: this.my_client,
+        payload: this.storage_id
+      },
+      id: this.accounts
+    }, (packet, resolve, reject) => {
+      if (packet.val.payload === "Successfully Cleared Storage") {
         this.localKeys = {};
+        resolve("Storage Cleared");
       } else {
-        console.error("Storage Id Not Set");
+        reject(packet.val.payload);
       }
-    } else {
-      console.error("Not Logged In");
-    }
+    });
   }
 
   storageUsage() {
-    if (this.authenticated && this.is_connected) {
-      if (this.storage_id) {
-        return JSON.stringify(JSON.stringify(this.localKeys).length);
-      } else {
-        return "Storage Id Not Set";
-      }
-    } else {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
+    if (!this.storage_id) return "Storage Id Not Set";
+
+    return JSON.stringify(this.localKeys).length + "";
   }
 
   storageLimit() {
@@ -2355,49 +1404,32 @@ class RoturExtension {
   }
 
   storageRemaining() {
-    if (this.authenticated && this.is_connected) {
-      if (this.storage_id) {
-        return 50000 - JSON.stringify(this.localKeys).length + "";
-      } else {
-        return "Storage Id Not Set";
-      }
-    } else {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
+    if (!this.storage_id) return "Storage Id Not Set";
+
+    return (50000 - JSON.stringify(this.localKeys).length) + "";
   }
 
   accountStorageUsage() {
-    if (this.authenticated && this.is_connected) {
-      return new Promise((resolve, reject) => {
-        this.ws.send(
-          JSON.stringify({
-            cmd: "pmsg",
-            val: {
-              command: "storage_usage",
-              client: this.my_client,
-              id: this.userToken,
-            },
-            id: this.accounts,
-          }),
-        );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
 
-        const handleStorageKey = (event) => {
-          let packet = JSON.parse(event.data);
-          if (packet?.origin?.username === this.accounts) {
-            if (packet.val.source_command === "storage_usage") {
-              if (packet.val.payload === "Not Logged In") {
-                reject("Not Logged In");
-              } else {
-                resolve(packet.val.payload);
-              }
-              this.ws.removeEventListener("message", handleStorageKey);
-            }
-          }
-        };
-        this.ws.addEventListener("message", handleStorageKey);
-      });
-    }
-    return "Not Logged In";
+    return this.handlePromise({
+      cmd: "pmsg",
+      val: {
+        command: "storage_usage",
+        client: this.my_client,
+        id: this.userToken
+      },
+      id: this.accounts
+    }, (packet, resolve, reject) => {
+      if (packet.val.payload === "Not Logged In") {
+        reject("Not Logged In");
+      } else {
+        resolve(packet.val.payload);
+      }
+    });
   }
 
   accountStorageLimit() {
@@ -2405,37 +1437,24 @@ class RoturExtension {
   }
 
   accountStorageRemaining() {
-    if (this.authenticated && this.is_connected) {
-      return new Promise((resolve, reject) => {
-        this.ws.send(
-          JSON.stringify({
-            cmd: "pmsg",
-            val: {
-              command: "storage_usage",
-              client: this.my_client,
-              id: this.userToken,
-            },
-            id: this.accounts,
-          }),
-        );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
 
-        const handleStorageKey = (event) => {
-          let packet = JSON.parse(event.data);
-          if (packet?.origin?.username === this.accounts) {
-            if (packet.val.source_command === "storage_usage") {
-              if (packet.val.payload === "Not Logged In") {
-                reject("Not Logged In");
-              } else {
-                resolve(1000000 - Number(packet.val.payload));
-              }
-              this.ws.removeEventListener("message", handleStorageKey);
-            }
-          }
-        };
-        this.ws.addEventListener("message", handleStorageKey);
-      });
-    }
-    return "Not Logged In";
+    return this.handlePromise({
+      cmd: "pmsg",
+      val: {
+        command: "storage_usage",
+        client: this.my_client,
+        id: this.userToken
+      },
+      id: this.accounts
+    }, (packet, resolve, reject) => {
+      if (packet.val.payload === "Not Logged In") {
+        reject("Not Logged In");
+      } else {
+        resolve(1000000 - Number(packet.val.payload));
+      }
+    });
   }
 
   sendMessage(args) {
@@ -2480,7 +1499,7 @@ class RoturExtension {
         return this.packets[args.TARGET]?.[0]?.origin || "";
       case "client":
         return (
-          this.packets[args.TARGET]?.[0]?.client ||
+          JSON.stringify(this.packets[args.TARGET]?.[0]?.client) ||
           '{"system":"Unknown", "version":"Unknown"}'
         );
       case "source port":
@@ -2520,30 +1539,22 @@ class RoturExtension {
   }
 
   clientIP() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
+    if (!this.is_connected) return "Not Connected";
     return this.client.ip;
   }
 
   clientUsername() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
+    if (!this.is_connected) return "Not Connected";
     return this.client.username;
   }
 
   clientUsers() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
+    if (!this.is_connected) return "Not Connected";
     return JSON.stringify(this.client.users);
   }
 
   getUserDesignation(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
+    if (!this.is_connected) return "Not Connected";
     return JSON.stringify(
       this.client.users.filter((user) =>
         user.startsWith(args.DESIGNATION + "-"),
@@ -2552,31 +1563,21 @@ class RoturExtension {
   }
 
   usernameConnected(args) {
-    if (!this.is_connected) {
-      return false;
-    }
-    if (!this.authenticated) {
-      return false;
-    }
+    if (!this.is_connected) return false;
+    if (!this.authenticated) return false;
     let regexp = new RegExp('(?<=")[a-zA-Z]{3}-' + args.USER + '§\\S{10}(?=")', "gi");
     return JSON.stringify(this.client.users).match(regexp) !== null;
   }
 
   userConnected(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (args.DESIGNATION.length !== 3) {
-      return "Invalid Designation";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (args.DESIGNATION.length !== 3) return "Invalid Designation";
     let regexp = new RegExp('(?<=")' + args.DESIGNATION + '-' + args.USER + '§\\S{10}(?=")', "gi");
     return JSON.stringify(this.client.users).match(regexp) !== null;
   }
 
   findID(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
+    if (!this.is_connected) return "Not Connected";
     let regexp = new RegExp('[a-zA-Z]{3}-' + args.USER + '§\\S{10}', "gi");
     return JSON.stringify(
       this.client.users.filter((user) => user.match(regexp) !== null),
@@ -2606,14 +1607,10 @@ class RoturExtension {
   onLeaveUser() {
     return this.lastLeft;
   }
-  
+
   setSyncedVariable(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
     this.ws.send(
       JSON.stringify({
         cmd: "pmsg",
@@ -2628,29 +1625,19 @@ class RoturExtension {
         id: args.USER,
       }),
     )
-    if (!this.syncedVariables[args.USER]) {
-      this.syncedVariables[args.USER] = {};
-    }
+    this.syncedVariables[args.USER] ||= {};
     this.syncedVariables[args.USER][args.KEY] = args.VALUE;
   }
 
   getSyncedVariable(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
     return JSON.stringify(this.syncedVariables[args.USER][args.KEY] || "");
   }
 
   deleteSyncedVariable(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
     this.ws.send(
       JSON.stringify({
         cmd: "pmsg",
@@ -2668,416 +1655,230 @@ class RoturExtension {
   }
 
   getSyncedVariables(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
     return JSON.stringify(this.syncedVariables[args.USER] || {});
   }
 
   sendMail(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    return new Promise((resolve, reject) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "omail_send",
-            client: this.my_client,
-            id: this.userToken,
-            payload: {
-              title: args.SUBJECT,
-              body: args.MESSAGE,
-              recipient: args.TO,
-            },
-          },
-          id: this.accounts,
-        }),
-      );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
 
-      const handleSendMailResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin?.username === this.accounts) {
-          if (packet.val.source_command === "omail_send") {
-            if (packet.val.payload === "Successfully Sent Omail") {
-              resolve(`Mail sent to ${args.TO}`);
-            } else {
-              reject(
-                `Failed to send mail to ${args.TO}: ${packet.val.payload}`,
-              );
-            }
-            this.ws.removeEventListener("message", handleSendMailResponse);
-          }
-        }
-      };
-
-      this.ws.addEventListener("message", handleSendMailResponse);
+    return this.handlePromise({
+      cmd: "pmsg",
+      val: {
+        command: "omail_send",
+        client: this.my_client,
+        id: this.userToken,
+        payload: {
+          title: args.SUBJECT,
+          body: args.MESSAGE,
+          recipient: args.TO,
+        },
+      },
+      id: this.accounts,
+    }, (packet, resolve, reject) => {
+      if (packet.val.payload === "Successfully Sent Omail") {
+        resolve(`Mail sent to ${args.TO}`);
+      } else {
+        reject(`Failed to send mail to ${args.TO}: ${packet.val.payload}`);
+      }
     });
   }
 
   getAllMail() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    return new Promise((resolve, reject) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "omail_getinfo",
-            client: this.my_client,
-            id: this.userToken,
-          },
-          id: this.accounts,
-        }),
-      );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
 
-      const handleGetAllMailResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin?.username === this.accounts) {
-          if (packet.val.source_command === "omail_getinfo") {
-            resolve(JSON.stringify(packet.val.payload));
-            this.ws.removeEventListener("message", handleGetAllMailResponse);
-          } else {
-            reject("Failed to get all mail");
-          }
-        }
-      };
-
-      this.ws.addEventListener("message", handleGetAllMailResponse);
+    return this.handlePromise({
+      cmd: "pmsg",
+      val: {
+        command: "omail_getinfo",
+        client: this.my_client,
+        id: this.userToken,
+      },
+      id: this.accounts,
+    }, (packet, resolve) => {
+      resolve(JSON.stringify(packet.val.payload));
     });
   }
 
   getMail(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    return new Promise((resolve, reject) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "omail_getid",
-            client: this.my_client,
-            payload: args.ID,
-            id: this.userToken,
-          },
-          id: this.accounts,
-        }),
-      );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
 
-      const handleGetMailResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin?.username === this.accounts) {
-          if (packet.val?.source_command === "omail_getid") {
-            if (packet.val?.payload[0] === args.ID) {
-              resolve(JSON.stringify(packet.val?.payload[1]));
-            } else {
-              reject(`Failed to get mail with ID: ${args.ID}`);
-            }
-            this.ws.removeEventListener("message", handleGetMailResponse);
-          }
-        }
-      };
-
-      this.ws.addEventListener("message", handleGetMailResponse);
+    return this.handlePromise({
+      cmd: "pmsg",
+      val: {
+        command: "omail_getid",
+        client: this.my_client,
+        payload: args.ID,
+        id: this.userToken,
+      },
+      id: this.accounts,
+    }, (packet, resolve, reject) => {
+      if (packet.val?.payload[0] === args.ID) {
+        resolve(JSON.stringify(packet.val.payload[1]));
+      } else {
+        reject(`Failed to get mail with ID: ${args.ID}`);
+      }
     });
   }
 
   deleteMail(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    return new Promise((resolve, reject) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "omail_delete",
-            client: this.my_client,
-            payload: args.ID,
-            id: this.userToken,
-          },
-          id: this.accounts,
-        }),
-      );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
 
-      const handleDeleteMailResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin.username === this.accounts) {
-          if (packet.val.source_command === "omail_delete") {
-            if (packet.val.payload === "Deleted Successfully") {
-              resolve(`Mail with ID ${args.ID} deleted`);
-            } else {
-              reject(
-                `Failed to delete mail with ID ${args.ID}: ${packet.val.payload}`,
-              );
-            }
-            this.ws.removeEventListener("message", handleDeleteMailResponse);
-          }
-        }
-      };
-
-      this.ws.addEventListener("message", handleDeleteMailResponse);
+    return this.handlePromise({
+      cmd: "pmsg",
+      val: {
+        command: "omail_delete",
+        client: this.my_client,
+        payload: args.ID,
+        id: this.userToken,
+      },
+      id: this.accounts,
+    }, (packet, resolve, reject) => {
+      if (packet.val.payload === "Deleted Successfully") {
+        resolve(`Mail with ID ${args.ID} deleted`);
+      } else {
+        reject(`Failed to delete mail with ID ${args.ID}: ${packet.val.payload}`);
+      }
     });
   }
 
   deleteAllMail() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    return new Promise((resolve, reject) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "omail_delete",
-            client: this.my_client,
-            payload: "all",
-            id: this.userToken,
-          },
-          id: this.accounts,
-        }),
-      );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
 
-      const handleDeleteAllMailResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin.username === this.accounts) {
-          if (packet.val.source_command === "omail_delete") {
-            if (packet.val.payload === "Deleted Successfully") {
-              resolve("All mail deleted");
-            } else {
-              reject(`Failed to delete all mail: ${packet.val.payload}`);
-            }
-            this.ws.removeEventListener("message", handleDeleteAllMailResponse);
-          }
-        }
-      };
-
-      this.ws.addEventListener("message", handleDeleteAllMailResponse);
+    return this.handlePromise({
+      cmd: "pmsg",
+      val: {
+        command: "omail_delete",
+        client: this.my_client,
+        payload: "all",
+        id: this.userToken,
+      },
+      id: this.accounts,
+    }, (packet, resolve, reject) => {
+      if (packet.val.payload === "Deleted Successfully") {
+        resolve("All mail deleted");
+      } else {
+        reject(`Failed to delete all mail: ${packet.val.payload}`);
+      }
     });
   }
 
   getFriendList() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
     return JSON.stringify(this.friends.list);
   }
 
   sendFriendRequest(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    if (this.friends.list.includes(args.FRIEND)) {
-      return "Already Friends";
-    }
-    if (args.FRIEND === this.user.username) {
-      return "You Need Other Friends :/";
-    }
-    return new Promise((resolve, reject) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "friend_request",
-            client: this.my_client,
-            payload: args.FRIEND,
-            id: this.userToken,
-          },
-          id: this.accounts,
-        }),
-      );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
+    if (this.friends.list.includes(args.FRIEND)) return "Already Friends";
+    if (args.FRIEND === this.user.username) return "You Need Other Friends :/";
 
-      const handleSendFriendRequestResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin?.username === this.accounts) {
-          if (packet.val.source_command === "friend_request") {
-            if (packet.val.payload === "Sent Successfully") {
-              resolve(`Sent Successfully`);
-            } else {
-              reject(packet.val.payload);
-            }
-            this.ws.removeEventListener(
-              "message",
-              handleSendFriendRequestResponse,
-            );
-          }
-        }
-      };
-
-      this.ws.addEventListener("message", handleSendFriendRequestResponse);
+    return this.handlePromise({
+      cmd: "pmsg",
+      val: {
+        command: "friend_request",
+        client: this.my_client,
+        payload: args.FRIEND,
+        id: this.userToken,
+      },
+      id: this.accounts,
+    }, (packet, resolve, reject) => {
+      if (packet.val.payload === "Sent Successfully") {
+        resolve("Sent Successfully");
+      } else {
+        reject(packet.val.payload);
+      }
     });
   }
 
   removeFriend(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    if (!this.friends.list.includes(args.FRIEND)) {
-      return "Not Friends";
-    }
-    return new Promise((resolve, reject) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "friend_remove",
-            client: this.my_client,
-            payload: args.FRIEND,
-            id: this.userToken,
-          },
-          id: this.accounts,
-        }),
-      );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
+    if (!this.friends.list.includes(args.FRIEND)) return "Not Friends";
 
-      const handleRemoveFriendResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin?.username === this.accounts) {
-          if (packet.val.source_command === "friend_remove") {
-            if (packet.val.payload === "Friend Removed") {
-              resolve(`Friend removed: ${args.FRIEND}`);
-            } else {
-              reject(`Failed to remove friend: ${packet.val.payload}`);
-            }
-            this.ws.removeEventListener("message", handleRemoveFriendResponse);
-          }
-        }
-      };
-
-      this.ws.addEventListener("message", handleRemoveFriendResponse);
+    return this.handlePromise({
+      cmd: "pmsg",
+      val: {
+        command: "friend_remove",
+        client: this.my_client,
+        payload: args.FRIEND,
+        id: this.userToken,
+      },
+      id: this.accounts,
+    }, (packet, resolve, reject) => {
+      if (packet.val.payload === "Friend Removed") {
+        this.friends.list = this.friends.list.filter(friend => friend !== args.FRIEND);
+        resolve(`Friend removed: ${args.FRIEND}`);
+      } else {
+        reject(`Failed to remove friend: ${packet.val.payload}`);
+      }
     });
   }
 
   acceptFriendRequest(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    if (!this.friends.requests.includes(args.FRIEND)) {
-      return "No Request";
-    }
-    return new Promise((resolve, reject) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "friend_accept",
-            client: this.my_client,
-            payload: args.FRIEND,
-            id: this.userToken,
-          },
-          id: this.accounts,
-        }),
-      );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
+    if (!this.friends.requests.includes(args.FRIEND)) return "No Request";
 
-      const handleRemoveFriendResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin?.username === this.accounts) {
-          if (packet.val.source_command === "friend_accept") {
-            if (packet.val.payload === "Request Accepted") {
-              this.friends.list.push(args.FRIEND);
-              this.friends.requests = this.friends.requests.filter(
-                (user) => user != args.FRIEND,
-              );
-              resolve(`Request Accepted`);
-            } else {
-              reject(packet.val.payload);
-            }
-            this.ws.removeEventListener("message", handleRemoveFriendResponse);
-          }
-        }
-      };
-
-      this.ws.addEventListener("message", handleRemoveFriendResponse);
+    return this.handlePromise({
+      cmd: "pmsg",
+      val: {
+        command: "friend_accept",
+        client: this.my_client,
+        payload: args.FRIEND,
+        id: this.userToken,
+      },
+      id: this.accounts,
+    }, (packet, resolve, reject) => {
+      if (packet.val.payload === "Request Accepted") {
+        this.friends.list.push(args.FRIEND);
+        this.friends.requests = this.friends.requests.filter(
+          (user) => user != args.FRIEND,
+        );
+        resolve("Request Accepted");
+      } else {
+        reject(packet.val.payload);
+      }
     });
   }
 
   declineFriendRequest(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    if (!this.friends.requests.includes(args.FRIEND)) {
-      return "No Request";
-    }
-    return new Promise((resolve, reject) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "friend_decline",
-            client: this.my_client,
-            payload: args.FRIEND,
-            id: this.userToken,
-          },
-          id: this.accounts,
-        }),
-      );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
+    if (!this.friends.requests.includes(args.FRIEND)) return "No Request";
 
-      const handleDeclineFriendRequestResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin?.username === this.accounts) {
-          if (packet.val.source_command === "friend_decline") {
-            if (packet.val.payload === "Request Declined") {
-              this.friends.requests = this.friends.requests.filter(
-                (user) => user != args.FRIEND,
-              );
-              resolve(`Request Declined`);
-            } else {
-              reject(packet.val.payload);
-            }
-            this.ws.removeEventListener(
-              "message",
-              handleDeclineFriendRequestResponse,
-            );
-          }
-        }
-      };
-
-      this.ws.addEventListener("message", handleDeclineFriendRequestResponse);
+    return this.handlePromise({
+      cmd: "pmsg",
+      val: {
+        command: "friend_decline",
+        client: this.my_client,
+        payload: args.FRIEND,
+        id: this.userToken,
+      },
+      id: this.accounts,
+    }, (packet, resolve, reject) => {
+      if (packet.val.payload === "Request Declined") {
+        this.friends.requests = this.friends.requests.filter(
+          (user) => user != args.FRIEND,
+        );
+        resolve("Request Declined");
+      } else {
+        reject(packet.val.payload);
+      }
     });
   }
 
   getFriendStatus(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
     if (this.friends.list.includes(args.FRIEND)) {
       return "Friend";
     } else if (this.friends.requests.includes(args.FRIEND)) {
@@ -3088,547 +1889,280 @@ class RoturExtension {
   }
 
   getFriendRequests() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
     return JSON.stringify(this.friends.requests) ?? "";
   }
 
   getFriendCount() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
     return this.friends.list.length ?? "";
   }
 
   getBalance() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
     return this.user["sys.currency"] ?? 0;
   }
 
   tranferCurrency(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    return new Promise((resolve, reject) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "currency_transfer",
-            client: this.my_client,
-            payload: {
-              amount: args.AMOUNT,
-              recipient: args.USER,
-            },
-            id: this.userToken,
-            client: this.my_client,
-          },
-          id: this.accounts,
-        }),
-      );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
 
-      const handleTransferCurrencyResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin?.username === this.accounts) {
-          if (packet.val.source_command === "currency_transfer") {
-            if (packet.val.payload === "Transfer Successful") {
-              resolve(`Success`);
-            } else {
-              reject(packet.val.payload);
-            }
-            this.ws.removeEventListener(
-              "message",
-              handleTransferCurrencyResponse,
-            );
-          }
-        }
-      };
-      this.ws.addEventListener("message", handleTransferCurrencyResponse);
+    return this.handlePromise({
+      cmd: "pmsg",
+      val: {
+        command: "currency_transfer",
+        client: this.my_client,
+        payload: {
+          amount: args.AMOUNT,
+          recipient: args.USER,
+        },
+        id: this.userToken,
+        client: this.my_client,
+      },
+      id: this.accounts,
+    }, (packet, resolve, reject) => {
+      if (packet.val.payload === "Transfer Successful") {
+        resolve("Success");
+      } else {
+        reject(packet.val.payload);
+      }
     });
   }
 
   getTransactions() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
     return JSON.stringify(this.user["sys.transactions"]);
   }
 
   getTransactionCount() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
     return this.user["sys.transactions"].length;
   }
 
   getMyOwnedItems() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    return JSON.stringify(this.user["sys.purchases"]);
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
+
+    return fetch(`https://social.rotur.dev/keys/mine?auth=${this.userToken}`)
+      .then(response => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.json();
+      })
+      .then(data => {
+        return JSON.stringify(data);
+      })
+      .catch(error => {
+        return `Error: ${error.message}`;
+      });
   }
 
   ownsItem(args) {
-    if (!this.is_connected) {
-      return false;
-    }
-    if (!this.authenticated) {
-      return false;
-    }
-    return this.user["sys.purchases"].includes(args.ITEM);
-  }
+    if (!this.is_connected) return false;
+    if (!this.authenticated) return false;
 
-  getMyOwnedItemCount() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    return this.user["sys.purchases"].length;
+    const username = this.user.username;
+
+    return fetch(`https://social.rotur.dev/keys/check/${username}?key=${args.ITEM}`)
+      .then(response => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.json();
+      })
+      .then(data => {
+        return data.owns === true;
+      })
+      .catch(error => {
+        console.error(`Error checking key ownership: ${error.message}`);
+        return false;
+      });
   }
 
   itemData(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    if (this.user["sys.purchases"].indexOf(args.ITEM) === -1) {
-      return "You Do Not Own This Item";
-    }
-    return new Promise((resolve) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "item_data",
-            payload: args.ITEM,
-            id: this.userToken,
-            client: this.my_client,
-          },
-          id: this.accounts,
-        }),
-      );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
 
-      const handleItemDataResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin?.username === this.accounts) {
-          if (packet.val.source_command === "item_data") {
-            resolve(packet.val.payload);
-            this.ws.removeEventListener(
-              "message",
-              handleItemDataResponse,
-            );
-          }
-        }
-      };
-      this.ws.addEventListener("message", handleItemDataResponse);
-    });
+    return fetch(`https://social.rotur.dev/keys/get/${args.ITEM}?auth=${this.userToken}`)
+      .then(response => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.json();
+      })
+      .then(data => {
+        return data.data || "No data available";
+      })
+      .catch(error => {
+        return `Error: ${error.message}`;
+      });
   }
 
   purchaseItem(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    if (this.user["sys.purchases"].indexOf(args.ITEM) !== -1) {
-      return "You Already Own This Item";
-    }
-    return new Promise((resolve, reject) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "item_purchase",
-            payload: args.ITEM,
-            id: this.userToken,
-            client: this.my_client,
-          },
-          id: this.accounts,
-        }),
-      );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
 
-      const handlePurchaseItemResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin?.username === this.accounts) {
-          if (packet.val.source_command === "item_purchase") {
-            if (packet.val.payload === "Item Purchased") {
-              resolve("Item Purchased");
-            } else {
-              reject(packet.val.payload);
-            }
-            this.ws.removeEventListener(
-              "message",
-              handlePurchaseItemResponse,
-            );
-          }
+    return fetch(`https://social.rotur.dev/keys/purchase/${args.ITEM}?auth=${this.userToken}`)
+      .then(response => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.json();
+      })
+      .then(data => {
+        if (data.success) {
+          return "Item Purchased";
+        } else {
+          return data.message || "Purchase failed";
         }
-      };
-      this.ws.addEventListener("message", handlePurchaseItemResponse);
-    });
+      })
+      .catch(error => {
+        return `Error: ${error.message}`;
+      });
   }
 
   itemInfo(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    if (this.user["sys.purchases"].indexOf(args.ITEM) === -1) {
-      return "You Do Not Own This Item";
-    }
-    return new Promise((resolve) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "item_info",
-            payload: args.ITEM,
-            id: this.userToken,
-            client: this.my_client,
-          },
-          id: this.accounts,
-        }),
-      );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
 
-      const handleItemInfoResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin?.username === this.accounts) {
-          if (packet.val.source_command === "item_info") {
-            resolve(typeof packet.val.payload === 'object' ? JSON.stringify(packet.val.payload) : packet.val.payload);
-            this.ws.removeEventListener(
-              "message",
-              handleItemInfoResponse,
-            );
-          }
-        }
-      };
-      this.ws.addEventListener("message", handleItemInfoResponse);
-    });
+    return fetch(`https://social.rotur.dev/keys/get/${args.ITEM}?auth=${this.userToken}`)
+      .then(response => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.json();
+      })
+      .then(data => {
+        return JSON.stringify(data);
+      })
+      .catch(error => {
+        return `Error: ${error.message}`;
+      });
   }
 
   getPublicItems(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-
-    return new Promise((resolve, reject) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "item_public",
-            payload: args.PAGE,
-            id: this.userToken,
-            client: this.my_client,
-          },
-          id: this.accounts,
-        }),
-      );
-
-      const handlePublicItemsResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin?.username === this.accounts) {
-          if (packet.val.source_command === "item_public") {
-            reject(JSON.stringify(packet.val.payload));
-            this.ws.removeEventListener(
-              "message",
-              handlePublicItemsResponse,
-            );
-          }
-        }
-      };
-      this.ws.addEventListener("message", handlePublicItemsResponse);
-    });
+    return "[]";
   }
 
   getPublicItemPages() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    return new Promise((resolve) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "item_public_pages",
-            id: this.userToken,
-            client: this.my_client,
-          },
-          id: this.accounts,
-        }),
-      );
-
-      const handlePublicItemPagesResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin?.username === this.accounts) {
-          if (packet.val.source_command === "item_public_pages") {
-            resolve(packet.val.payload);
-            this.ws.removeEventListener(
-              "message",
-              handlePublicItemPagesResponse,
-            );
-          }
-        }
-      }
-      this.ws.addEventListener("message", handlePublicItemPagesResponse);
-    });
+    return "[]";
   }
 
   getMyCreatedItems() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    return JSON.stringify(this.user["sys.items"]);
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
+
+    return fetch(`https://social.rotur.dev/keys/mine?auth=${this.userToken}`)
+      .then(response => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.json();
+      })
+      .then(data => {
+        const createdItems = data.filter(item => item.isCreator === true);
+        return JSON.stringify(createdItems);
+      })
+      .catch(error => {
+        return `Error: ${error.message}`;
+      });
   }
 
   createItem(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    return new Promise((resolve, reject) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "item_create",
-            payload: {
-              name: args.NAME,
-              description: args.DESCRIPTION,
-              price: args.PRICE,
-              data: args.CODE,
-              tradable: args.TRADABLE,
-            },
-            id: this.userToken,
-            client: this.my_client,
-          },
-          id: this.accounts,
-        }),
-      );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
 
-      const handleCreateItemResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin?.username === this.accounts) {
-          if (packet.val.source_command === "item_create") {
-            if (packet.val.payload === "Item Created") {
-              resolve("Item Created");
-            } else {
-              reject(packet.val.payload);
-            }
-            this.ws.removeEventListener("message", handleCreateItemResponse);
-          }
+    const url = `https://social.rotur.dev/keys/create?auth=${this.userToken}&data=${encodeURIComponent(args.CODE)}&price=${encodeURIComponent(args.PRICE)}`;
+
+    return fetch(url)
+      .then(response => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.json();
+      })
+      .then(data => {
+        if (data.success) {
+          return "Item Created";
+        } else {
+          return data.message || "Creation failed";
         }
-      };
-
-      this.ws.addEventListener("message", handleCreateItemResponse);
-    });
+      })
+      .catch(error => {
+        return `Error: ${error.message}`;
+      });
   }
 
   updateItem(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    if (this.user["sys.items"].indexOf(args.ITEM) === -1) {
-      return "You Do Not Own This Item";
-    }
-    return new Promise((resolve, reject) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "item_update",
-            payload: {
-              item: args.ITEM,
-              key: args.KEY,
-              data: args.DATA,
-            },
-            id: this.userToken,
-            client: this.my_client,
-          },
-          id: this.accounts,
-        }),
-      );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
 
-      const handleUpdateItemResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin?.username === this.accounts) {
-          if (packet.val.source_command === "item_update") {
-            if (packet.val.payload === "Item Updated") {
-              resolve("Item Updated");
-            } else {
-              reject(packet.val.payload);
-            }
-            this.ws.removeEventListener("message", handleUpdateItemResponse);
-          }
+    let updateUrl = `https://social.rotur.dev/keys/update/${args.ITEM}?auth=${this.userToken}&key=${args.ITEM}`;
+
+    if (args.KEY === "data") {
+      updateUrl += `&data=${encodeURIComponent(args.DATA)}`;
+    } else {
+      return "Only data updates are supported through the API. Use the key manager for other properties.";
+    }
+
+    return fetch(updateUrl)
+      .then(response => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.json();
+      })
+      .then(data => {
+        if (data.success) {
+          return "Item Updated";
+        } else {
+          return data.message || "Update failed";
         }
-      };
-
-      this.ws.addEventListener("message", handleUpdateItemResponse);
-    });
+      })
+      .catch(error => {
+        return `Error: ${error.message}`;
+      });
   }
 
   deleteItem(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    if (this.user["sys.items"].indexOf(args.ITEM) === -1) {
-      return "You Do Not Own This Item";
-    }
-    return new Promise((resolve, reject) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "item_delete",
-            payload: args.ITEM,
-            id: this.userToken,
-            client: this.my_client,
-          },
-          id: this.accounts,
-        }),
-      );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
 
-      const handleDeleteItemResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin?.username === this.accounts) {
-          if (packet.val.source_command === "item_delete") {
-            if (packet.val.payload === "Item Deleted") {
-              resolve("Item Deleted");
-            } else {
-              reject(packet.val.payload);
-            }
-            this.ws.removeEventListener("message", handleDeleteItemResponse);
-          }
+    return fetch(`https://social.rotur.dev/keys/delete/${args.ITEM}?auth=${this.userToken}`)
+      .then(response => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.json();
+      })
+      .then(data => {
+        if (data.success) {
+          return "Item Deleted";
+        } else {
+          return data.message || "Deletion failed";
         }
-      };
-
-      this.ws.addEventListener("message", handleDeleteItemResponse);
-    });
+      })
+      .catch(error => {
+        return `Error: ${error.message}`;
+      });
   }
 
   hideItem(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    return new Promise((resolve, reject) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "item_hide",
-            payload: args.ID,
-            id: this.userToken,
-            client: this.my_client,
-          },
-          id: this.accounts,
-        }),
-      );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
 
-      const handleHideItemResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin?.username === this.accounts) {
-          if (packet.val.source_command === "item_hide") {
-            if (packet.val.payload === "Item Hidden") {
-              resolve("Item Hidden");
-            } else {
-              reject(packet.val.payload);
-            }
-            this.ws.removeEventListener("message", handleHideItemResponse);
-          }
-        }
-      };
-
-      this.ws.addEventListener("message", handleHideItemResponse);
-    });
+    return "Please use the key manager at https://rotur.dev/key-manager to hide keys";
   }
 
   showItem(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    return new Promise((resolve, reject) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "item_show",
-            payload: args.ID,
-            id: this.userToken,
-            client: this.my_client,
-          },
-          id: this.accounts,
-        }),
-      );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
 
-      const handleShowItemResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin?.username === this.accounts) {
-          if (packet.val.source_command === "item_show") {
-            if (packet.val.payload === "Item Shown") {
-              resolve("Item Shown");
-            } else {
-              reject(packet.val.payload);
-            }
-            this.ws.removeEventListener("message", handleShowItemResponse);
-          }
-        }
-      };
+    return "Please use the key manager at https://rotur.dev/key-manager to show keys";
+  }
 
-      this.ws.addEventListener("message", handleShowItemResponse);
-    });
+  RAWgetAllPackets() {
+    return JSON.stringify(this.packetQueue);
+  }
+
+  RAWgetFirstPacket() {
+    return JSON.stringify(this.packetQueue[0] || "{}");
+  }
+
+  RAWdeleteFirstPacket() {
+    this.packetQueue.shift();
+  }
+
+  RAWdeleteAllPackets() {
+    this.packetQueue = [];
   }
 
   gotBadgesSuccessfully() {
@@ -3636,32 +2170,20 @@ class RoturExtension {
   }
 
   userBadges() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
     return JSON.stringify(this.user["sys.badges"]);
   }
 
   userBadgeCount() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
     return this.user["sys.badges"].length;
   }
 
   hasBadge(args) {
-    if (!this.is_connected) {
-      return false;
-    }
-    if (!this.authenticated) {
-      return false;
-    }
+    if (!this.is_connected) return false;
+    if (!this.authenticated) return false;
     return this.user["sys.badges"].includes(args.BADGE);
   }
 
@@ -3677,19 +2199,12 @@ class RoturExtension {
   redownloadBadges() {
     this._initializeBadges()
   }
-}
 
-function randomString(length) {
-  const characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let result = "";
-  const charactersLength = characters.length;
-  let counter = 0;
-  while (counter < length) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    counter += 1;
+  callData() {
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
+    return JSON.stringify(this.callData);
   }
-  return result ?? "";
 }
 
 Scratch.extensions.register(new RoturExtension());
