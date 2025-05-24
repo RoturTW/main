@@ -238,7 +238,9 @@ class RoturExtension {
         }),
         blocks.command("logout", "Logout"),
         blocks.boolean("loggedIn", "Authenticated"),
-        blocks.boolean("firstLogin", "Is This The First Login Of Today?"),
+        blocks.boolean("firstLogin", "Is This The First Login Of Today?", {}, {
+          hideFromPalette: true,
+        }),
         blocks.event("whenAuthenticated", "When Authenticated"),
         blocks.separator(),
         blocks.label("Account Information"),
@@ -994,7 +996,7 @@ class RoturExtension {
           this.ws.send(JSON.stringify(msg));
         }
         if (packet.listener == "set_username_cfg") {
-          this.client.username = this.designation + "-" + this.username;
+          this.client.username = this.username;
           let room = "roturTW";
           let msg = {
             cmd: "link",
@@ -1060,7 +1062,7 @@ class RoturExtension {
   }
 
   firstLogin() {
-    return this.first_login;
+    return false;
   }
 
   login(args) {
@@ -1072,68 +1074,63 @@ class RoturExtension {
     return this._login(args);
   }
 
-  _login(args) {
+  async _login(args) {
     if (!this.is_connected) return "Not Connected";
     if (this.authenticated) return "Already Logged In";
-    return this.handlePromise({
-      cmd: "pmsg",
-      val: {
-        ip: this.client.ip,
-        client: this.my_client,
-        command: "login",
-        id: ":3",
-        payload: [args.USERNAME, args.PASSWORD],
-      },
-      id: this.accounts,
-    }, (packet, resolve, reject) => {
-      if (typeof packet.val?.payload === "object") {
-        this.userToken = packet.val.token;
-        this.user = packet.val.payload;
-        this.first_login = packet.val.first_login;
+    
+    try {
+        const response = await fetch(`https://social.rotur.dev/get_user?username=${encodeURIComponent(args.USERNAME)}&password=${encodeURIComponent(args.PASSWORD)}`);
+        
+        if (!response.ok) throw new Error(`Authentication failed: ${response.status}`);
+        
+        const packet = await response.json();
 
-        delete packet.val
-        delete this.user.key
-        delete this.user.password
+        this.userToken = packet.key;
+        this.user = { ...packet };
 
-        // friends data  
+        delete this.user.key;
+        delete this.user.password;
+
         this.friends = {};
-        // handle if the user has no friends :P
+        
+        // Handle if the user has no friends :P
         if (!this.user["sys.friends"]) this.user["sys.friends"] = [];
         if (!this.user["sys.requests"]) this.user["sys.requests"] = [];
-
+        
         this.friends.list = this.user["sys.friends"];
         this.friends.requests = this.user["sys.requests"];
-        delete this.user.friends;
-        delete this.user.requests;
 
-        // setup username for reconnect
-        this.username = this.designation + "-" + args.USERNAME + "Â§" + randomString(10);
+        delete this.user["sys.friends"];
+        delete this.user["sys.requests"];
+
+        this.username = this.designation + "-" + args.USERNAME + "§" + randomString(10);
 
         this.ws.send(
-          JSON.stringify({
-            cmd: "setid",
-            val: this.username,
-            listener: "set_username_cfg",
-          }),
+            JSON.stringify({
+                cmd: "setid",
+                val: this.username,
+                listener: "set_username_cfg",
+            })
         );
-        this.my_client.username = this.username;
         
+        this.my_client.username = this.username;
         this.authenticated = true;
+
         Scratch.vm.runtime.startHats("roturEXT_whenAuthenticated");
 
         this.ws.send(
-          JSON.stringify({
-            cmd: "auth",
-            val: this.userToken
-          })
+            JSON.stringify({
+                cmd: "auth",
+                val: this.userToken
+            })
         );
-
-        resolve(`Logged in as ${args.USERNAME}`);
-      } else {
+        
+        return `Logged in as ${args.USERNAME}`;
+        
+    } catch (error) {
         this.authenticated = false;
-        reject(`Failed to login as ${args.USERNAME}`);
-      }
-    });
+        throw new Error(`Failed to login as ${args.USERNAME}: ${error.message}`);
+    }
   }
 
   register(args) {
@@ -1609,20 +1606,20 @@ class RoturExtension {
   usernameConnected(args) {
     if (!this.is_connected) return false;
     if (!this.authenticated) return false;
-    let regexp = new RegExp('(?<=")[a-zA-Z]{3}-' + args.USER + 'Â§\\S{10}(?=")', "gi");
+    let regexp = new RegExp('(?<=")[a-zA-Z]{3}-' + args.USER + '§\\S{10}(?=")', "gi");
     return JSON.stringify(this.client.users).match(regexp) !== null;
   }
 
   userConnected(args) {
     if (!this.is_connected) return "Not Connected";
     if (args.DESIGNATION.length !== 3) return "Invalid Designation";
-    let regexp = new RegExp('(?<=")' + args.DESIGNATION + '-' + args.USER + 'Â§\\S{10}(?=")', "gi");
+    let regexp = new RegExp('(?<=")' + args.DESIGNATION + '-' + args.USER + '§\\S{10}(?=")', "gi");
     return JSON.stringify(this.client.users).match(regexp) !== null;
   }
 
   findID(args) {
     if (!this.is_connected) return "Not Connected";
-    let regexp = new RegExp('[a-zA-Z]{3}-' + args.USER + 'Â§\\S{10}', "gi");
+    let regexp = new RegExp('[a-zA-Z]{3}-' + args.USER + '§\\S{10}', "gi");
     return JSON.stringify(
       this.client.users.filter((user) => user.match(regexp) !== null),
     );
