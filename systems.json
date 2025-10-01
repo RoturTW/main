@@ -48,5 +48,15 @@
         "URL":"https://geec-os.itch.io/geecos",
         "logoURL":"",
         "showOffURL":""
+    },
+        "KyrOS":{
+        "author":"Amelia",
+        "designation":"kyr",
+        "created":"",
+        "description":"A indev \"virtual\" machine that will have its own language, use rotur, and be a general use system. Created by NubbinsRuZ on discord",
+        "languages":[],
+        "URL":"",
+        "logoURL":"",
+        "showOffURL":""
     }
 }
