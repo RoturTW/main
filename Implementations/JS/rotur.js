@@ -6,14 +6,14 @@ let designation = "rtr"
 
 let my_client = {
   "system": "rotur.js",
-  "version": "v2"
+  "version": "v3"
 }
 // client is sent with all packets to help tell servers and other clients what system you are using
 
 let packets = {}
 // connect to websocket server
 function sendHandshake() {
-  msg = {
+  const msg = {
     "cmd": "handshake",
     "val": {
       "language": "Javascript",
@@ -28,10 +28,10 @@ function sendHandshake() {
   ws.send(JSON.stringify(msg));
 }
 
-function setUsername(username) {
-  msg = {
+function setUsername(name) {
+  const msg = {
     "cmd": "setid",
-    "val": username,
+    "val": name,
     "listener": "set_username_cfg"
   }
 
@@ -39,7 +39,7 @@ function setUsername(username) {
 }
 
 function linkRoom(room) {
-  msg = {
+  const msg = {
     "cmd": "link",
     "val": room,
     "listener": "link_cfg"
@@ -49,12 +49,12 @@ function linkRoom(room) {
 }
 
 function replyToPacket(message, payload) {
-  msg = {
+  const msg = {
     "cmd": "pmsg",
     "val": {
       "client": my_client,
       "target": message.source,
-      "message": payload
+      "message": payload,
       "timestamp": Date.now()
     },
     "id": message.origin
@@ -63,8 +63,8 @@ function replyToPacket(message, payload) {
   ws.send(JSON.stringify(msg));
 }
 
-function sendMessage(payload, username, target, source) {
-  msg = {
+function sendMessage(payload, name, target, source) {
+  const msg = {
     "cmd": "pmsg",
     "val": {
       "client": my_client,
@@ -73,7 +73,7 @@ function sendMessage(payload, username, target, source) {
       "source": source,
       "timestamp": Date.now()
     },
-    "id": username
+    "id": name
   }
 
   ws.send(JSON.stringify(msg));
@@ -88,21 +88,21 @@ ws.onopen = function () {
   sendHandshake();
 
   ws.onmessage = function (event) {
-    packet = JSON.parse(event.data);
-    if (packet.cmd == "client_ip") {
+    const packet = JSON.parse(event.data);
+    if (packet.cmd === "client_ip") {
       client.ip = packet.val;
-    } else if (packet.cmd == "client_obj") {
+    } else if (packet.cmd === "client_obj") {
       client.username = packet.val.username;
-    } else if (packet.cmd == "ulist") {
-      if (packet.mode == "add") {
+    } else if (packet.cmd === "ulist") {
+      if (packet.mode === "add") {
         client.users.push(packet.val);
-      } else if (packet.mode == "remove") {
-        client.users = client.users.filter(user => user != packet.val);
-      } else if (packet.mode == "set") {
+      } else if (packet.mode === "remove") {
+        client.users = client.users.filter(user => user !== packet.val);
+      } else if (packet.mode === "set") {
         client.users = packet.val;
       }
     }
-    if (packet.cmd == "pmsg") {
+    if (packet.cmd === "pmsg") {
       packet.origin = packet.origin.username;
       delete packet.rooms
       delete packet.cmd
@@ -115,15 +115,20 @@ ws.onopen = function () {
       packets[packet.val.target].push(packet);
       delete packet.val
     }
-    if (packet.listener == "handshake_cfg") {
+    if (packet.listener === "handshake_cfg") {
       setUsername(designation + "-" + username);
     }
-    if (packet.listener == "set_username_cfg") {
+    if (packet.listener === "set_username_cfg") {
       client.username = designation + "-" + username;
       linkRoom(["roturTW"]);
     }
-    if (packet.listener == "link_cfg") {
+    if (packet.listener === "link_cfg") {
       client.room = packet.val
     }
   }
+}
+
+ws.onclose = function () {
+  // websocket is closed.
+  console.log("Connection is closed...");
 }
