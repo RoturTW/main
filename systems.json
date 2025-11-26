@@ -19,15 +19,15 @@
         "logoURL":"",
         "showOffURL":"https://raw.githubusercontent.com/ThePandaDever/Flufi-OS/refs/heads/main/Assets/flufioslatest.png"
     },
-    "novaOS":{
+    "OrionClient":{
         "author":"darkdot",
-        "designation":"nov",
-        "created":"",
-        "description":"The powerful, stable, fully local and source-available web system, made for every modern browser and device.",
+        "designation":"nva",
+        "created":"5/1/2024.",
+        "description":"The unofficial rotur client.",
         "languages":[],
-        "URL":"https://adthoughtsglobal.github.io",
-        "logoURL":"https://adthoughtsglobal.github.io/Nova-OS/n.png",
-        "showOffURL":""
+        "URL":"https://runnova.github.io/orion/",
+        "logoURL":"https://runnova.github.io/orion/oclogo.png",
+        "showOffURL":"https://runnova.github.io/orion/assets/orionclient%20promo.png"
     },
     "OliveOS":{
         "author":"justnoone",
