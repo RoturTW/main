@@ -9,16 +9,6 @@
         "logoURL":"https://raw.githubusercontent.com/Mistium/Origin-OS/refs/heads/main/Resources/origin-logo-new.png",
         "showOffURL":"https://raw.githubusercontent.com/Mistium/Origin-OS/refs/heads/main/Resources/Desktop1.png"
     },
-    "Flufi-OS":{
-        "author":"Pnada",
-        "designation":"flf",
-        "created":"11/5/2024",
-        "description":"A fully pen based turbowarp os with 2 languages, aiming to make a full desktop environment :3",
-        "languages":["FBL","CFBL"],
-        "URL":"https://github.com/ThePandaDever/Flufi-OS",
-        "logoURL":"",
-        "showOffURL":"https://raw.githubusercontent.com/ThePandaDever/Flufi-OS/refs/heads/main/Assets/flufioslatest.png"
-    },
     "OrionClient":{
         "author":"darkdot",
         "designation":"nva",
